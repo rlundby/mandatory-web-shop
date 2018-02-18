@@ -4,7 +4,8 @@ const ui = {
 shopBtn: document.getElementById("shop"),
 payBtn: document.getElementById("pay"),
 shopWindow: document.getElementById("shop-mode"),
-buyWindow: document.getElementById("checkout-mode")
+buyWindow: document.getElementById("checkout-mode"),
+errorTesting: document.getElementById("error-testing")
 };
 
 var paying = false;
@@ -114,34 +115,58 @@ loadProducts("perfume", perfumeProducts);
 
 const buyForm = document.getElementById("buyform");
 
+// buyForm.addEventListener("submit", e => {
+//     e.preventDefault();
+//     const formFields = {
+//         firstName: document.buyform.fname,
+//         lastName: document.buyform.lname,
+//         email: document.buyform.mail,
+//         address: document.buyform.address,
+//         city: document.buyform.city,
+//         zip: document.buyform.zipcode,
+//         errorTesting: document.getElementById("error-testing")
+//     };
+//
+//     for (var i in formFields) {
+//         if (formFields[i].value == "") {
+//             formFields.errorTesting.innerHTML = "<p> Please fill in all required details *</p>";
+//             formFields[i].focus();
+//             formFields[i].style.borderColor = "red";
+//             setTimeout(function () {
+//                 formFields[i].style.borderColor = "";
+//             }, 500);
+//             return false;
+//
+//         } else {
+//             i++;
+//             formFields.errorTesting.innerHTML = "";
+//         }
+//     }
+// });
+
+let inputs = Array.from(document.getElementsByTagName("input"));
+inputs.splice(3,1);
+
 buyForm.addEventListener("submit", e => {
     e.preventDefault();
-    const formFields = {
-        firstName: document.buyform.fname,
-        lastName: document.buyform.lname,
-        email: document.buyform.mail,
-        address: document.buyform.address,
-        city: document.buyform.city,
-        zip: document.buyform.zipcode,
-        errorTesting: document.getElementById("error-testing")
-    };
 
-    for (var i in formFields) {
-        if (formFields[i].value == "") {
-            formFields.errorTesting.innerHTML = "<p> Please fill in all required details *</p>";
-            formFields[i].focus();
-            formFields[i].style.borderColor = "red";
+    for (var i in inputs){
+        if (inputs[i].value === "") {
+            ui.errorTesting.innerHTML = `<p>Please fill in the required fields *</p>` ;
+            inputs[i].focus();
+            inputs[i].style.borderColor = "red";
             setTimeout(function () {
-                formFields[i].style.borderColor = "";
+                inputs[i].style.borderColor = "";
             }, 500);
             return false;
 
         } else {
-            i++;
-            formFields.errorTesting.innerHTML = "";
+            ui.errorTesting.innerHTML = "";
         }
     }
 });
+
+
 
 
 
