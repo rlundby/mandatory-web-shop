@@ -1,0 +1,81 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background: url("http://www.zastavki.com/pictures/originals/2015/Winter_Crystals_of_snow_on_gray_background_102993_.jpg");
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 30px 1fr 30px;
+}
+.checkout-form {
+    padding: 20px;
+}
+#checkout-mode {
+    background: white;
+    border: 1px solid lightgray;
+    grid-column: 2;
+}
+#shop-mode {
+  grid-column: 2;
+}
+nav {
+    padding: 20px;
+}
+
+nav li {
+    font-size: 18px;
+}
+
+#product-catalogue {
+    border: 1px solid black;
+    display: flex;
+    padding: 10px;
+    align-items: baseline;
+    background: white;
+}
+
+#product-catalogue img {
+    width: 200px;
+    height: auto;
+}
+
+.product {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin-right: 10px;
+    justify-content: center;
+}
+
+.product h3 {
+    font-size: 20px;
+}
+
+.product-price {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.category div {
+    display: flex;
+    text-decoration: none;
+
+}
+.category div a {
+    text-decoration: none;
+    color: Black;
+}
+.shopping-cart {
+    border-left: 1px solid lightgray;
+    margin-top: 20px;
+}
+.shopping-cart h3 {
+    margin-top: 150px;
+}
+
+#error-testing {
+    font-weight:  bold;
+    color: red;
+    padding: 10px;
+}
