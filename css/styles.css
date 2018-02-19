@@ -2,6 +2,21 @@ body {
     font-family: 'Roboto', sans-serif;
     background: url("http://www.zastavki.com/pictures/originals/2015/Winter_Crystals_of_snow_on_gray_background_102993_.jpg");
 }
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+header img {
+    width: 100vw;
+}
+header h1 {
+    position: absolute;
+    font-size: 120px;
+    color:white;
+    font-family: 'Roboto', sans-serif;
+    padding-bottom: 30px;
+}
 
 .main-grid {
     display: grid;
@@ -27,7 +42,7 @@ nav li {
 }
 
 #product-catalogue {
-    border: 1px solid black;
+    border: 1px solid lightgray;
     display: flex;
     padding: 10px;
     align-items: baseline;
@@ -45,6 +60,7 @@ nav li {
     padding: 10px;
     margin-right: 10px;
     justify-content: center;
+    cursor: pointer;
 }
 
 .product h3 {
@@ -74,7 +90,7 @@ nav li {
     margin-top: 150px;
 }
 
-#error-testing {
+#error-testing, #not-a-number {
     font-weight:  bold;
     color: red;
     padding: 10px;

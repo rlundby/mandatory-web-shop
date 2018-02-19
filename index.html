@@ -22,6 +22,10 @@
 </head>
 <body>
 <!-- Sitewide nav-->
+<header>
+    <h1>Shop or die</h1>
+    <img src="http://www.queensu.ca/qieep/sites/all/themes/webpublish_queensweb/images/headers/banner_yellow_purple.jpg" alt="">
+</header>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -48,17 +52,11 @@
 
 
     </div>
-    <!--<button id="shop" type="button" class="btn btn-default btn-sm">-->
-        <!--<span class="glyphicon glyphicon-home"></span> Products-->
-    <!--</button>-->
-    <!--<button id="pay" type="button" class="btn btn-default btn-sm">-->
-        <!--<span class="glyphicon glyphicon-shopping-cart"></span> Shopping Cart-->
-    <!--</button>-->
 </nav>
 
 <div class="main-grid">
     <!-- Start of Shop Mode -->
-    <div id="shop-mode">
+    <div id="shop-mode" class="container-fluid">
         <div id="product-catalogue">
             <div class="category">
                 <h2><span class="glyphicon glyphicon-phone"></span> Electronics</h2>
@@ -78,6 +76,7 @@
     <!-- Start of Checkout Mode-->
     <div id="checkout-mode" class="container">
         <span id="error-testing"></span>
+        <span id="not-a-number"></span>
         <div class="checkout-form col-md-6">
             <form name="buyform" type="submit" id="buyform">
                 <div class="form-row">
@@ -116,17 +115,18 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label for="inputZip">Zip *</label>
-                        <input type="text" name="zipcode" class="form-control" id="inputZip" placeholder="124 23">
+                        <label for="zipcode">Zip *</label>
+                        <input type="text" name="zipcode" class="form-control" id="zipcode" placeholder="124 23">
                     </div>
                 </div>
                 <div class="form-group col-md-12">
                     <label for="exampleFormControlTextarea1">Comments</label>
                     <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    <small id="passwordHelpBlock" class="form-text text-muted">
+                        ( * = Required fields )
+                    </small>
                 </div>
-                <small id="passwordHelpBlock" class="form-text text-muted">
-                    ( * = Required fields )
-                </small>
+
                 <div class="form-row col-md-12">
                     <button type="submit" class="btn btn-success btn-lg">Purchase</button>
                 </div>
@@ -138,6 +138,7 @@
             <h3>Total: 0:-</h3>
         </div>
     </div>
+
 
 </div>
 

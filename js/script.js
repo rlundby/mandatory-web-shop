@@ -5,7 +5,8 @@ shopBtn: document.getElementById("shop"),
 payBtn: document.getElementById("pay"),
 shopWindow: document.getElementById("shop-mode"),
 buyWindow: document.getElementById("checkout-mode"),
-errorTesting: document.getElementById("error-testing")
+errorTesting: document.getElementById("error-testing"),
+wrongNumber: document.getElementById("not-a-number")
 };
 
 var paying = false;
@@ -71,6 +72,7 @@ function loadProducts (category, list) {
     let currentCategory = document.getElementById(`${category}`);
     currentCategory.className = category;
     for ( var i = 0; i < list.length; i++) {
+
         // Create the product div for the item
         let product = document.createElement("a");
         product.className = "product";
@@ -115,41 +117,19 @@ loadProducts("perfume", perfumeProducts);
 
 const buyForm = document.getElementById("buyform");
 
-// buyForm.addEventListener("submit", e => {
-//     e.preventDefault();
-//     const formFields = {
-//         firstName: document.buyform.fname,
-//         lastName: document.buyform.lname,
-//         email: document.buyform.mail,
-//         address: document.buyform.address,
-//         city: document.buyform.city,
-//         zip: document.buyform.zipcode,
-//         errorTesting: document.getElementById("error-testing")
-//     };
-//
-//     for (var i in formFields) {
-//         if (formFields[i].value == "") {
-//             formFields.errorTesting.innerHTML = "<p> Please fill in all required details *</p>";
-//             formFields[i].focus();
-//             formFields[i].style.borderColor = "red";
-//             setTimeout(function () {
-//                 formFields[i].style.borderColor = "";
-//             }, 500);
-//             return false;
-//
-//         } else {
-//             i++;
-//             formFields.errorTesting.innerHTML = "";
-//         }
-//     }
-// });
-
 let inputs = Array.from(document.getElementsByTagName("input"));
 inputs.splice(3,1);
+inputs.splice(5,1);
+
+let zipCode = document.buyform.zipcode;
+
 
 buyForm.addEventListener("submit", e => {
     e.preventDefault();
+    IsValidZipCode(zipCode.value);
 
+
+    // Input validation
     for (var i in inputs){
         if (inputs[i].value === "") {
             ui.errorTesting.innerHTML = `<p>Please fill in the required fields *</p>` ;
@@ -164,7 +144,46 @@ buyForm.addEventListener("submit", e => {
             ui.errorTesting.innerHTML = "";
         }
     }
+
+    //Phone number validation
+    var phoneNmbr = document.buyform.number;
+    var allowedSymbols = /^\d{10}$/;
+
+    if(phoneNmbr.value.match(allowedSymbols) || phoneNmbr.value === "") {
+        ui.errorTesting.innerHTML = "";
+        return false;
+
+    }
+    else {
+        ui.errorTesting.innerHTML = `<p>Please fill in a valid phone number *</p>` ;
+        phoneNmbr.focus();
+        phoneNmbr.style.borderColor = "red";
+        setTimeout(function () {
+            phoneNmbr.style.borderColor = "";
+        }, 500);
+        return false;
+    }
+
+
+
+    function IsValidZipCode(zip) {
+        var isValid = /^\d{5}$/.test(zip);
+        if (isValid){
+            ui.wrongNumber.innerHTML = "";
+            return true;
+        } else {
+            ui.wrongNumber.innerHTML = `<p>Please fill in a valid zip code *</p>` ;
+            zipCode.style.borderColor = "red";
+            setTimeout(function () {
+                zipCode.style.borderColor = "";
+            }, 500);
+        }
+    }
+
+
 });
+
+
 
 
 
