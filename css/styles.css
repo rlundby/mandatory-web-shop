@@ -31,7 +31,7 @@ header h1 {
     grid-column: 2;
 }
 #shop-mode {
-  grid-column: 2;
+    grid-column: 2;
 }
 nav {
     padding: 20px;
@@ -97,5 +97,11 @@ nav li {
 }
 
 #totalPrice {
-  font-weight: bold;
+    font-weight: bold;
+}
+
+
+#increase-quantity, #decrease-quantity {
+    margin-left: 10px;
+    margin-right: 10px;
 }
