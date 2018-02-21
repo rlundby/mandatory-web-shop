@@ -6,7 +6,7 @@ payBtn: document.getElementById("pay"),
 shopWindow: document.getElementById("shop-mode"),
 buyWindow: document.getElementById("checkout-mode"),
 errorTesting: document.getElementById("error-testing"),
-wrongNumber: document.getElementById("not-a-number")
+wrongNumber: document.getElementById("not-a-number"),
 };
 
 var paying = false;
@@ -40,30 +40,36 @@ const electronicProducts = [
     {   productName: "Apple iPhone X - 256GB Silver",
         price: "8.590",
         description: "5,8 QHD-screen. 12x2/7MP camera",
-        img: "https://www.komplett.se/img/p/800/a21b080d-bed4-3803-e860-bbb67c477ceb.jpg"},
+        img: "https://www.komplett.se/img/p/800/a21b080d-bed4-3803-e860-bbb67c477ceb.jpg",
+        id: "123"},
     {   productName: "Intel Core i7-8700K Processor",
         price: "4.200",
         description: "Socket-LGA1151, 6-Core, 12-Thread",
-        img: "https://www.komplett.se/img/p/1200/ed24940c-de1e-48be-a1f3-f03ff98f24fd.jpg"},
+        img: "https://www.komplett.se/img/p/1200/ed24940c-de1e-48be-a1f3-f03ff98f24fd.jpg",
+        id: "1234"},
     {   productName: "Phanteks Eclipse P400",
         price: "899",
         description: "Window - Satin Black",
-        img: "https://www.komplett.se/img/p/800/2f2e5a12-4c90-0122-8d45-6d20b8a29e87.jpg"},
+        img: "https://www.komplett.se/img/p/800/2f2e5a12-4c90-0122-8d45-6d20b8a29e87.jpg",
+        id: "12345"}
 ];
 
 const perfumeProducts = [
     {   productName: "Cristiano Ronaldo Legacy",
         price: "699",
         description: "EDT 50ml ",
-        img: "https://www.komplett.se/img/p/1200/7bc98d28-97a1-6109-ea21-8a1acd698e7a.jpg"},
+        img: "https://www.komplett.se/img/p/1200/7bc98d28-97a1-6109-ea21-8a1acd698e7a.jpg",
+        id: "abc"},
     {   productName: "Voluspa Prosecco Rose",
         price: "249",
         description: "Tin candle 127 g ",
-        img: "https://www.komplett.se/img/p/1200/ec83dd5d-12f5-1ab3-1bac-0f747d9efa65.jpg"},
+        img: "https://www.komplett.se/img/p/1200/ec83dd5d-12f5-1ab3-1bac-0f747d9efa65.jpg",
+        id: "abcd"},
     {   productName: "Bruno Banani Pure Man EDT",
         price: "456",
         description: "50ml ",
-        img: "https://www.komplett.se/img/p/1200/8db23380-6b3e-4e3f-be77-9d42ada40088.jpg"},
+        img: "https://www.komplett.se/img/p/1200/8db23380-6b3e-4e3f-be77-9d42ada40088.jpg",
+        id: "abcde"},
 ];
 
 
@@ -76,6 +82,7 @@ function loadProducts (category, list) {
         // Create the product div for the item
         let product = document.createElement("a");
         product.className = "product";
+        product.id = list[i].id;
 
         // Assign it to the correct category
         currentCategory.appendChild(product);
@@ -104,13 +111,65 @@ function loadProducts (category, list) {
         // Add purchase button
         let purchaseBtn = document.createElement("button");
         purchaseBtn.innerText = "Add to cart";
-        purchaseBtn.className = "btn btn-success";
+        purchaseBtn.className = "btn btn-success purchase-button";
         product.appendChild(purchaseBtn);
+        getParent(purchaseBtn, list);
   }
 };
 
+
+
 loadProducts("electronics", electronicProducts);
 loadProducts("perfume", perfumeProducts);
+
+var boughtItems = [];
+
+function getParent (purchaseBtn, list) {
+    purchaseBtn.addEventListener("click", function(){
+        var parentDiv = this.parentNode;
+        var productId = parentDiv.getAttribute("id");
+        console.log(productId);
+        //let boughtItem = boughtItems.push(list.filter(list => list.id <= id));
+        var result = list.find(function(e) {
+            return e.id == productId;
+        });
+        console.log(result)
+        boughtItems.push(result);
+        boughtItemsCheckout(result);
+    });
+};
+var shoppingCart = document.getElementById("shoppingcart")
+
+shoppingCart.innerHTML = `
+        <h1> Items in basket: </h1>
+        <p>No items in basket</p>
+        <h3>Total: 0:- </h3>
+        `;
+
+function boughtItemsCheckout (product){
+    let newestProduct = product.productName;
+    if (boughtItems.length !== 0) {
+        shoppingCart.innerHTML = `
+        <h1 id="items-in-basket"> Items in basket </h1>
+        <h3 id="total"> Total: 0:-</h3>
+        `
+        let newName = document.createElement("p");
+        newName.innerText = newestProduct;
+        let itemsInBasket = document.getElementById("items-in-basket");
+        let totalCost = document.getElementById("total");
+        shoppingCart.insertBefore(newName, totalCost);
+    } else {
+        shoppingCart.innerHTML = `
+        <h1> Items in basket: </h1>
+        <p>No items in basket</p>
+        <h3>Total: 0:- </h3>
+        `
+    };
+};
+
+
+
+
 
 
 //Check if form is empty on submit
