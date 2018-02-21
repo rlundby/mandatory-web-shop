@@ -122,52 +122,89 @@ function loadProducts (category, list) {
 loadProducts("electronics", electronicProducts);
 loadProducts("perfume", perfumeProducts);
 
+// Keep track on which item people buy
 var boughtItems = [];
+var totalCostText = document.getElementById("total");
+var totalPrice = 0;
+var uniqueProductsArr;
 
 function getParent (purchaseBtn, list) {
     purchaseBtn.addEventListener("click", function(){
         var parentDiv = this.parentNode;
         var productId = parentDiv.getAttribute("id");
-        console.log(productId);
         //let boughtItem = boughtItems.push(list.filter(list => list.id <= id));
         var result = list.find(function(e) {
             return e.id == productId;
         });
-        console.log(result)
         boughtItems.push(result);
-        boughtItemsCheckout(result);
+        addNewItemsToCart(result);
+        totalCostUpdate();
+        productsInBasketCounter();
+        createBasket();
     });
 };
-var shoppingCart = document.getElementById("shoppingcart")
+var productsInBasket = document.getElementById("checkout-table");
 
-shoppingCart.innerHTML = `
-        <h1> Items in basket: </h1>
-        <p>No items in basket</p>
-        <h3>Total: 0:- </h3>
-        `;
+function addNewItemsToCart (product){
 
-function boughtItemsCheckout (product){
-    let newestProduct = product.productName;
-    if (boughtItems.length !== 0) {
-        shoppingCart.innerHTML = `
-        <h1 id="items-in-basket"> Items in basket </h1>
-        <h3 id="total"> Total: 0:-</h3>
-        `
-        let newName = document.createElement("p");
-        newName.innerText = newestProduct;
-        let itemsInBasket = document.getElementById("items-in-basket");
-        let totalCost = document.getElementById("total");
-        shoppingCart.insertBefore(newName, totalCost);
-    } else {
-        shoppingCart.innerHTML = `
-        <h1> Items in basket: </h1>
-        <p>No items in basket</p>
-        <h3>Total: 0:- </h3>
-        `
-    };
+        // var row = productsInBasket.insertRow(1);
+        // var name = row.insertCell(0);
+        // var price =  row.insertCell(1);
+        // var quantity = row.insertCell(2);
+        // name.innerHTML = product.productName;
+        // price.innerHTML = `${product.price}:-`;
+
+        var uniqueProducts = boughtItems.reduce((ar, obj) => {
+            let bool = false;
+            if (!ar) {
+                ar = [];
+            }
+            ar.forEach((a) => {
+                if (a.id === obj.id) {
+                    a.count++;
+                    bool = true;
+                }
+            });
+            if (!bool) {
+                obj.count = 1;
+                ar.push(obj);
+            }
+            return ar;
+        }, []);
+        uniqueProductsArr = uniqueProducts;
+        return uniqueProducts;
+
+        };
+
+function createBasket() {
+    for ( i = 0; i < uniqueProductsArr.length; i++) {
+            var row = productsInBasket.insertRow(1);
+            var name = row.insertCell(0);
+            var price =  row.insertCell(1);
+            var quantity = row.insertCell(2);
+            name.innerHTML = uniqueProductsArr[i].productName;
+            price.innerHTML = `${uniqueProductsArr[i].price}:-`;
+            quantity.innerHTML = uniqueProductsArr[i].count;
+    }
 };
 
 
+
+function totalCostUpdate () {
+    let totalPrice = 0;
+    for (i in boughtItems) {
+        let price = boughtItems[i].price;
+        var numberPrice = parseInt(price.replace(/[^0-9]/g, ''));
+        totalPrice = totalPrice + numberPrice;
+        totalCostText.innerHTML = `Total Price: <span id="totalPrice">${totalPrice}:-</span>`;
+    }
+};
+
+function productsInBasketCounter(){
+  let totalProducts = boughtItems.length;
+  let counter = document.getElementById("counter");
+  counter.innerText = totalProducts;
+};
 
 
 
@@ -241,6 +278,7 @@ buyForm.addEventListener("submit", e => {
 
 
 });
+
 
 
 

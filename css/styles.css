@@ -95,3 +95,7 @@ nav li {
     color: red;
     padding: 10px;
 }
+
+#totalPrice {
+  font-weight: bold;
+}

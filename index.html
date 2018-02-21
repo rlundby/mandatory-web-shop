@@ -43,7 +43,7 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class>
-                <a href="#" id="pay"><span class="glyphicon glyphicon-shopping-cart"></span>Checkout <span class="badge">3</span></a>
+                <a href="#" id="pay"><span class="glyphicon glyphicon-shopping-cart"></span>Checkout <span class="badge" id="counter">0</span></a>
             </li>
         </ul>
     </div>
@@ -134,7 +134,11 @@
             </form>
         </div>
         <div class="shopping-cart col-md-6" id="shoppingcart">
-
+            <h1>Items in basket: </h1>
+            <table class="table table-striped" id="checkout-table">
+                <tr><th>Product</th><th>Price</th><th>Quantity</th></tr>
+            </table>
+            <h3 id="total"></h3>
         </div>
     </div>
 
