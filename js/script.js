@@ -1,5 +1,4 @@
 // Creating the UI, letting us toggle between shopping and paying
-
 const ui = {
     shopBtn: document.getElementById("shop"),
     payBtn: document.getElementById("pay"),
@@ -8,41 +7,7 @@ const ui = {
     errorTesting: document.getElementById("error-testing"),
 };
 
-// Hide Showing
-var paying = false;
-
-swapScreens();
-
-function swapScreens() {
-    if (paying === false) {
-        ui.buyWindow.style.display = "none";
-        ui.shopWindow.style.display = "block";
-    } else {
-        ui.shopWindow.style.display ="none";
-        ui.buyWindow.style.display = "block";
-    }
-}
-
-ui.payBtn.addEventListener("click", e => {
-    paying = true;
-    swapScreens();
-    var removedDupes = compressArray(itemsInCart);
-    console.log(removedDupes);
-    createCart(removedDupes);
-    totalCostUpdate ();
-});
-
-ui.shopBtn.addEventListener("click", e => {
-    paying = false;
-    swapScreens();
-    checkoutTable.innerHTML = `
-    <tr><th>Product</th><th>Price</th><th>Quantity</th></tr>
-    `;
-});
-
-
 // Current Products Section - divided into category
-
 const electronicProducts = [
     {   productName: "Apple iPhone X - 256GB Silver",
         price: "8.590",
@@ -85,6 +50,38 @@ const perfumeProducts = [
         quantity: 1},
 ];
 
+// Hide Showing
+var paying = false;
+
+swapScreens();
+
+function swapScreens() {
+    if (paying === false) {
+        ui.buyWindow.style.display = "none";
+        ui.shopWindow.style.display = "block";
+    } else {
+        ui.shopWindow.style.display ="none";
+        ui.buyWindow.style.display = "block";
+    }
+}
+
+ui.payBtn.addEventListener("click", e => {
+    paying = true;
+    swapScreens();
+    showProductsOnCheckout();
+});
+
+ui.shopBtn.addEventListener("click", e => {
+    paying = false;
+    swapScreens();
+    checkoutTable.innerHTML = `
+    <tr><th>Product</th><th>Price</th><th>Quantity</th></tr>
+    `;
+});
+
+
+
+
 const allProducts = electronicProducts.concat(perfumeProducts);
 
 function loadProducts (category,list) {
@@ -95,7 +92,6 @@ function loadProducts (category,list) {
         product.className = "product";
         product.id = list[i].id;
         currentCategory.appendChild(product);
-
         product.innerHTML = `
           <img src=${list[i].img}>
           <h3>${list[i].productName}</h3>    
@@ -112,7 +108,6 @@ loadProducts("perfume", perfumeProducts);
 
 // Keep track on which item people buy
 var itemsInCart = [];
-var noDupesPlease = [];
 const purchaseButtons = document.querySelectorAll(".purchase-button");
 purchaseButtons.forEach(button => button.addEventListener("click", addToCart));
 
@@ -120,144 +115,130 @@ purchaseButtons.forEach(button => button.addEventListener("click", addToCart));
 function addToCart(e) {
     var parentDiv = this.parentNode;
     var productId = parentDiv.getAttribute("id");
-    // Get the object pressed
-    var result = allProducts.find(function(e) {
-        return e.id === productId;
-    })
-    itemsInCart.push(result);
-    productsInBasketCounter();
+    // Find item I clicked buy on
+    var clickedItem = allProducts.find(function(e) {
+        return e.id === productId; })
+    var found = itemsInCart.some(function (el) {
+        return el.id === clickedItem.id;
+    });
+
+    if (itemsInCart.length == 0) {
+        console.log("First item!");
+        itemsInCart.push(clickedItem);
+    } else {
+        if (!found) {
+            console.log("du har ej klickat på denna förtut")
+            itemsInCart.push(clickedItem);
+        } else {
+            console.log("du har klickat på den här förut")
+            clickedItem.quantity ++;
+
+        }
+    }
+    //Update total amount of products:
+    totalProducts();
+    //Update the total price:
+    totalCost();
 }
 
-function compressArray(original) {
-
-    var compressed = [];
-    var copy = original.slice(0);
-
-    for (var i = 0; i < original.length; i++) {
-
-        var myCount = 0;
-        for (var w = 0; w < copy.length; w++) {
-            if (original[i] == copy[w]) {
-                myCount++;
-                delete copy[w];
-            }
-        }
-        if (myCount > 0) {
-            var a = new Object();
-            a = original[i];
-            a.quantity = myCount;
-            compressed.push(a);
-        }
+// Count the total amount of products added
+function totalProducts () {
+    // Update total
+    let totalItemsInCartText = document.getElementById("counter");
+    let totalItemsInCart = 0;
+    for (let i = 0; i < itemsInCart.length; i++ ) {
+        totalItemsInCart += itemsInCart[i].quantity
     }
-    return compressed;
-};
+    totalItemsInCartText.innerText = `${totalItemsInCart}`
+}
 
-const checkoutTable = document.getElementById("checkout-table");
-
-
-function createCart(list) {
-    for ( i = 0; i < list.length; i++) {
-        var row = checkoutTable.insertRow(1);
-        row.id = list[i].id;
-        var name = row.insertCell(0);
-        var price =  row.insertCell(1);
-        var quantity = row.insertCell(2);
-        name.innerHTML = list[i].productName;
-        price.innerHTML = `${list[i].price}:-`;
-        quantity.innerHTML = `<button class="btn btn-xs" id="increase-quantity">+</button>${list[i].quantity}<button id="decrease-quantity" class="btn btn-xs">-</button>`;
-    }
-};
-
-
-function totalCostUpdate () {
+// Count the total cost of products added
+function totalCost () {
     let totalCostText = document.getElementById("total");
     let totalPrice = 0;
     for (i in itemsInCart) {
         let price = itemsInCart[i].price;
-        var numberPrice = parseInt(price.replace(/[^0-9]/g, ''));
-        totalPrice = totalPrice + numberPrice;
+        let removeSymbols = parseInt(price.replace(/[^0-9]/g, ''));
+        let quantityPrice =  removeSymbols * itemsInCart[i].quantity;
+        totalPrice = totalPrice + quantityPrice;
         totalCostText.innerHTML = `Total Price: <span id="totalPrice">${totalPrice}:-</span>`;
     }
 };
 
-function productsInBasketCounter(){
-    let totalProducts = itemsInCart.length;
-    let counter = document.getElementById("counter");
-    counter.innerText = totalProducts;
+
+const checkoutTable = document.getElementById("checkout-table");
+function showProductsOnCheckout() {
+    for(var i = checkoutTable.rows.length - 1; i > 0; i--)
+    {
+        checkoutTable.deleteRow(i);
+    }
+    // Prints all products on checkout
+    for (i = 0; i < itemsInCart.length; i++) {
+        if (itemsInCart[i].quantity != 0) {
+            var quantityCart = itemsInCart[i].quantity;
+            var row = checkoutTable.insertRow(1);
+            row.id = itemsInCart[i].id;
+            var name = row.insertCell(0);
+            var price = row.insertCell(1);
+            var quantity = row.insertCell(2);
+            name.innerHTML = itemsInCart[i].productName;
+            price.innerHTML = `${itemsInCart[i].price}:-`;
+            // quantity.innerHTML = `<div></div>
+            // <input id="number${[i]}" class="test" type="number" value="${itemsInCart[i].quantity}" min="0">`;
+            quantity.innerHTML = `${quantityCart}`;
+            var increaseButton = document.createElement("button");
+            increaseButton.innerText = "+"
+            var decreaseButton = document.createElement("button");
+            decreaseButton.innerText = "-"
+            quantity.appendChild(increaseButton);
+            quantity.appendChild(decreaseButton);
+
+            increaseButton.addEventListener("click", increase);
+            decreaseButton.addEventListener("click", decrease);
+        }
+    }
 };
 
 
+function increase() {
+    let oneUp = this.parentNode;
+    let getID = oneUp.parentNode;
+    console.log(getID);
+    let productId = getID.getAttribute("id");
 
 
-//Check if form is empty on submit
+    let result = itemsInCart.find(function(e) {
+        return e.id === productId;
+    })
 
-const buyForm = document.getElementById("buyform");
+    result.quantity ++;
+    showProductsOnCheckout();
+    totalProducts();
+    totalCost();
+}
 
-let inputs = Array.from(document.getElementsByTagName("input"));
-inputs.splice(3,1);
-inputs.splice(5,1);
+function decrease() {
+    let oneUp = this.parentNode;
+    let getID = oneUp.parentNode;
+    console.log(getID);
+    let productId = getID.getAttribute("id");
+    var p = this.parentNode.parentNode;
 
-let zipCode = document.buyform.zipcode;
+    let result = itemsInCart.find(function(e) {
+        return e.id === productId;
+    })
 
-
-buyForm.addEventListener("submit", e => {
-    e.preventDefault();
-    IsValidZipCode(zipCode.value);
-
-
-// Input validation
-    for (var i in inputs){
-        if (inputs[i].value === "") {
-            ui.errorTesting.innerHTML = `<p>Please fill in the required fields *</p>` ;
-            inputs[i].focus();
-            inputs[i].style.borderColor = "red";
-            setTimeout(function () {
-                inputs[i].style.borderColor = "";
-            }, 500);
-            return false;
-
-        } else {
-            ui.errorTesting.innerHTML = "";
-        }
+    if (result.quantity > 1) {
+        result.quantity --;
+        showProductsOnCheckout()
+    } else {
+        result.quantity = 0;
+        p.parentNode.removeChild(p)
     }
 
-//Phone number validation
-    var phoneNmbr = document.buyform.number;
-    var allowedSymbols = /^\d{10}$/;
-
-    if(phoneNmbr.value.match(allowedSymbols) || phoneNmbr.value === "") {
-        ui.errorTesting.innerHTML = "";
-        return false;
-
-    }
-    else {
-        ui.errorTesting.innerHTML = `<p>Please fill in a valid phone number *</p>` ;
-        phoneNmbr.focus();
-        phoneNmbr.style.borderColor = "red";
-        setTimeout(function () {
-            phoneNmbr.style.borderColor = "";
-        }, 500);
-        return false;
-    }
-
-    function IsValidZipCode(zip) {
-        var isValid = /^\d{5}$/.test(zip);
-        var wrongNumber = document.getElementById("not-a-number");
-        if (isValid){
-            wrongNumber.innerHTML = "";
-            return true;
-        } else {
-            wrongNumber.innerHTML = `<p>Please fill in a valid zip code *</p>` ;
-            zipCode.style.borderColor = "red";
-            setTimeout(function () {
-                zipCode.style.borderColor = "";
-            }, 500);
-        }
-    }
-
-
-});
-
+    totalProducts();
+    totalCost();
+}
 
 
 
