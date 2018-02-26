@@ -167,6 +167,7 @@ function totalCost () {
 
 
 const checkoutTable = document.getElementById("checkout-table");
+
 function showProductsOnCheckout() {
     for(var i = checkoutTable.rows.length - 1; i > 0; i--)
     {
@@ -187,9 +188,11 @@ function showProductsOnCheckout() {
             // <input id="number${[i]}" class="test" type="number" value="${itemsInCart[i].quantity}" min="0">`;
             quantity.innerHTML = `${quantityCart}`;
             var increaseButton = document.createElement("button");
+            increaseButton.classList.add("incbtn");
             increaseButton.innerText = "+"
             var decreaseButton = document.createElement("button");
             decreaseButton.innerText = "-"
+            decreaseButton.classList.add("decbtn");
             quantity.appendChild(increaseButton);
             quantity.appendChild(decreaseButton);
 
@@ -199,6 +202,13 @@ function showProductsOnCheckout() {
     }
 };
 
+
+// Delegated event listener :))))
+// document.body.addEventListener("click", function(e){
+//     if (e.target.classList.contains("decbtn")){
+//         decrease(e.target);
+//     }
+// });
 
 function increase() {
     let oneUp = this.parentNode;
