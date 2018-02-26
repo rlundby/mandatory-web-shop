@@ -251,6 +251,77 @@ function decrease() {
 }
 
 
+//Check if form is empty on submit
+
+const buyForm = document.getElementById("buyform");
+
+let inputs = Array.from(document.getElementsByTagName("input"));
+inputs.splice(3,1);
+inputs.splice(5,1);
+
+let zipCode = document.buyform.zipcode;
+
+
+buyForm.addEventListener("submit", e => {
+    e.preventDefault();
+    IsValidZipCode(zipCode.value);
+
+
+// Input validation
+    for (var i in inputs){
+        if (inputs[i].value === "") {
+            ui.errorTesting.innerHTML = `<p>Please fill in the required fields *</p>` ;
+            inputs[i].focus();
+            inputs[i].style.borderColor = "red";
+            setTimeout(function () {
+                inputs[i].style.borderColor = "";
+            }, 500);
+            return false;
+
+        } else {
+            ui.errorTesting.innerHTML = "";
+        }
+    }
+
+//Phone number validation
+    var phoneNmbr = document.buyform.number;
+    var allowedSymbols = /^\d{10}$/;
+
+    if(phoneNmbr.value.match(allowedSymbols) || phoneNmbr.value === "") {
+        ui.errorTesting.innerHTML = "";
+        return false;
+
+    }
+    else {
+        ui.errorTesting.innerHTML = `<p>Please fill in a valid phone number *</p>` ;
+        phoneNmbr.focus();
+        phoneNmbr.style.borderColor = "red";
+        setTimeout(function () {
+            phoneNmbr.style.borderColor = "";
+        }, 500);
+        return false;
+    }
+
+    function IsValidZipCode(zip) {
+        var isValid = /^\d{5}$/.test(zip);
+        var wrongNumber = document.getElementById("not-a-number");
+        if (isValid){
+            wrongNumber.innerHTML = "";
+            return true;
+        } else {
+            wrongNumber.innerHTML = `<p>Please fill in a valid zip code *</p>` ;
+            zipCode.style.borderColor = "red";
+            zipCode.focus();
+            setTimeout(function () {
+                zipCode.style.borderColor = "";
+            }, 500);
+        }
+    }
+
+
+});
+
+
 
 
 
