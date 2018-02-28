@@ -1,9 +1,6 @@
+
 // Creating the UI, letting us toggle between shopping and paying
 const ui = {
-    shopBtn: document.getElementById("shop"),
-    payBtn: document.getElementById("pay"),
-    shopWindow: document.getElementById("shop-mode"),
-    buyWindow: document.getElementById("checkout-mode"),
     errorTesting: document.getElementById("error-testing"),
 };
 
@@ -57,21 +54,21 @@ swapScreens();
 
 function swapScreens() {
     if (paying === false) {
-        ui.buyWindow.style.display = "none";
-        ui.shopWindow.style.display = "block";
+        $("#checkout-mode").css("display", "none");
+        $("#shop-mode").css("display", "block");
     } else {
-        ui.shopWindow.style.display ="none";
-        ui.buyWindow.style.display = "block";
+        $("#shop-mode").css("display", "none");
+        $("#checkout-mode").css("display", "block");
     }
 }
 
-ui.payBtn.addEventListener("click", e => {
+$("#pay").on("click", e => {
     paying = true;
     swapScreens();
     showProductsOnCheckout();
 });
 
-ui.shopBtn.addEventListener("click", e => {
+$("#shop").on("click", e => {
     paying = false;
     swapScreens();
     checkoutTable.innerHTML = `
@@ -79,42 +76,41 @@ ui.shopBtn.addEventListener("click", e => {
     `;
 });
 
-
-
-
 const allProducts = electronicProducts.concat(perfumeProducts);
 
 function loadProducts (category,list) {
-    let currentCategory = document.getElementById(`${category}`);
-    currentCategory.className = category;
+    let $currentCategory = $(`#${category}`);
+    $currentCategory.addClass(category);
     for (var i = 0; i < list.length; i++) {
-        let product = document.createElement("a");
-        product.className = "product";
-        product.id = list[i].id;
-        currentCategory.appendChild(product);
-        product.innerHTML = `
+        $currentCategory.append($("<a></a>").addClass("product").attr('id', list[i].id).html(`
           <img src=${list[i].img}>
           <h3>${list[i].productName}</h3>    
           <p>${list[i].description}</p>
           <p class="product-price">${list[i].price}:-</p>
           <button class="btn btn-success purchase-button">Add to cart</button>
-          `
+          `));
     };
 };
-
 
 loadProducts("electronics", electronicProducts);
 loadProducts("perfume", perfumeProducts);
 
 // Keep track on which item people buy
 var itemsInCart = [];
-const purchaseButtons = document.querySelectorAll(".purchase-button");
-purchaseButtons.forEach(button => button.addEventListener("click", addToCart));
+const $purchaseButtons = $(".purchase-button")
+
+
+$(".purchase-button").on("click", e => {
+    addToCart(e);
+    totalProducts();
+    totalCost();
+});
 
 
 function addToCart(e) {
-    var parentDiv = this.parentNode;
-    var productId = parentDiv.getAttribute("id");
+    let thisItem = e.currentTarget;
+    let parentDiv = thisItem.parentNode;
+    let productId = parentDiv.getAttribute("id");
     // Find item I clicked buy on
     var clickedItem = allProducts.find(function(e) {
         return e.id === productId; })
@@ -123,14 +119,11 @@ function addToCart(e) {
     });
 
     if (itemsInCart.length == 0) {
-        console.log("First item!");
         itemsInCart.push(clickedItem);
     } else {
         if (!found) {
-            console.log("du har ej klickat på denna förtut")
             itemsInCart.push(clickedItem);
         } else {
-            console.log("du har klickat på den här förut")
             clickedItem.quantity ++;
 
         }
@@ -138,19 +131,19 @@ function addToCart(e) {
     //Update total amount of products:
     totalProducts();
     //Update the total price:
-    totalCost();
+     totalCost();
 }
 
 // Count the total amount of products added
 function totalProducts () {
     // Update total
-    let totalItemsInCartText = document.getElementById("counter");
     let totalItemsInCart = 0;
     for (let i = 0; i < itemsInCart.length; i++ ) {
         totalItemsInCart += itemsInCart[i].quantity
     }
-    totalItemsInCartText.innerText = `${totalItemsInCart}`
+    $("#counter").text(`${totalItemsInCart}`);
 }
+
 
 // Count the total cost of products added
 function totalCost () {
@@ -161,7 +154,7 @@ function totalCost () {
         let removeSymbols = parseInt(price.replace(/[^0-9]/g, ''));
         let quantityPrice =  removeSymbols * itemsInCart[i].quantity;
         totalPrice = totalPrice + quantityPrice;
-        totalCostText.innerHTML = `Total Price: <span id="totalPrice">${totalPrice}:-</span>`;
+        $("#total").html(`Total Price: <span id="totalPrice">${totalPrice}:-</span>`);
     }
 };
 
@@ -183,64 +176,56 @@ function showProductsOnCheckout() {
             var quantity = row.insertCell(2);
             name.innerHTML = itemsInCart[i].productName;
             price.innerHTML = `${itemsInCart[i].price}:-`;
-            // quantity.innerHTML = `<div></div>
-            // <input id="number${[i]}" class="test" type="number" value="${itemsInCart[i].quantity}" min="0">`;
             quantity.innerHTML = `${quantityCart}`;
             var increaseButton = document.createElement("button");
+            increaseButton.classList.add("incBtn")
             increaseButton.innerText = "+"
             var decreaseButton = document.createElement("button");
             decreaseButton.innerText = "-"
+            decreaseButton.classList.add("decBtn")
             quantity.appendChild(increaseButton);
             quantity.appendChild(decreaseButton);
 
-            increaseButton.addEventListener("click", increase);
-            decreaseButton.addEventListener("click", decrease);
         }
     }
 };
 
 
-function increase() {
-    let oneUp = this.parentNode;
-    let getID = oneUp.parentNode;
-    console.log(getID);
-    let productId = getID.getAttribute("id");
+// Increase and decrease buttons
+$("#checkout-table").on("click", e => {
 
+    if(e.target.classList.contains("incBtn")){
+        let getID = e.target.parentNode.parentNode;
+        let productId = getID.getAttribute("id");
 
-    let result = itemsInCart.find(function(e) {
-        return e.id === productId;
-    })
+        let result = itemsInCart.find(function(e) {
+            return e.id === productId;
+        })
+        result.quantity ++;
+        showProductsOnCheckout();
 
-    result.quantity ++;
-    showProductsOnCheckout();
-    totalProducts();
-    totalCost();
-}
+    } else if (e.target.classList.contains("decBtn")){
+        let getID = e.target.parentNode.parentNode;
+        let productId = getID.getAttribute("id");
+        var p = e.target.parentNode.parentNode;
 
-function decrease() {
-    let oneUp = this.parentNode;
-    let getID = oneUp.parentNode;
-    console.log(getID);
-    let productId = getID.getAttribute("id");
-    var p = this.parentNode.parentNode;
+        let result = itemsInCart.find(function(e) {
+            return e.id === productId;
+        })
 
-    let result = itemsInCart.find(function(e) {
-        return e.id === productId;
-    })
+        if (result.quantity > 1) {
+            result.quantity --;
+            showProductsOnCheckout()
+        } else {
+            result.quantity = 0;
+            p.parentNode.removeChild(p)
+        }
 
-    if (result.quantity > 1) {
-        result.quantity --;
-        showProductsOnCheckout()
-    } else {
-        result.quantity = 0;
-        p.parentNode.removeChild(p)
-    }
+    };
 
     totalProducts();
     totalCost();
-}
-
-
+});
 
 
 
