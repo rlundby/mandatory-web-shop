@@ -29,10 +29,49 @@ header h1 {
     background: white;
     border: 1px solid lightgray;
     grid-column: 2;
+    display: none;
 }
 #shop-mode {
     grid-column: 2;
 }
+
+#show-a-product {
+    display: none;
+    grid-column: 2;
+    background: white;
+}
+#single-product-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+}
+#single-product-view h1 {
+    grid-column: 2/4;
+    grid-row: 1;
+    text-align: center;
+}
+#single-product-view img {
+    grid-column: 2/4;
+    grid-row: 2;
+    width: 500px;
+    margin-left: 230px;
+}
+#single-product-view .product-desc {
+    grid-column: 2/4;
+    grid-row: 3;
+    text-align: center;
+}
+#single-product-view div {
+    grid-column: 2/3;
+    grid-row: 4;
+    display: flex;
+    justify-content: flex-end;
+}
+#single-product-view div p {
+    margin-right: 30px;
+}
+
+
 nav {
     padding: 20px;
 }
@@ -105,3 +144,12 @@ nav li {
     margin-left: 10px;
     margin-right: 10px;
 }
+
+#product-reviews {
+    margin-left: 50px;
+    max-width: 70%;
+}
+#product-reviews button{
+    margin-bottom: 10px;
+}
+

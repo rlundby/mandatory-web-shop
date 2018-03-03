@@ -47,34 +47,123 @@ const perfumeProducts = [
         quantity: 1},
 ];
 
-// Hide Showing
-var paying = false;
+// Reviews of products
 
-swapScreens();
-
-function swapScreens() {
-    if (paying === false) {
-        $("#checkout-mode").css("display", "none");
-        $("#shop-mode").css("display", "block");
-    } else {
-        $("#shop-mode").css("display", "none");
-        $("#checkout-mode").css("display", "block");
+var productReviews = [
+    {
+        title: "This phone works great!",
+        name: "Steve Jobs",
+        rating: "5",
+        review: "I really love this phone! It's probably the most expensive iPhone yet, which is create for company revenue",
+        id: "123"
     }
+]
+
+// Change how the app looks depending on what is clicked
+$("body").on("click", function(e) {
+
+    if (e.target.id === "pay") {
+        $("#checkout-mode").css("display", "block");
+        $("#shop-mode").hide();
+        $("#show-a-product").hide();
+        showProductsOnCheckout();
+    }
+    else if (e.target.id === "shop") {
+        $("#shop-mode").css("display", "block");
+        $("#checkout-mode").hide();
+        $("#show-a-product").hide();
+
+        checkoutTable.innerHTML = `
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </tr>
+    `;
+    }
+});
+
+var latestClickedProduct;
+
+// Render Single Product View
+$(".category").on("click",".product a", e => {
+    $("#show-a-product").css("display", "block");
+    $("#checkout-mode").hide();
+    $("#shop-mode").hide();
+
+    // Write product clicked!
+
+    let itemID = e.currentTarget.parentNode.getAttribute("id");
+    let clickedItem = allProducts.find(function(e) {
+    return e.id === itemID; })
+
+    // Change HTML
+    $("#single-product-view").empty();
+    $("#single-product-view").html(
+        `<h1>${clickedItem.productName}</h1>
+         <img src="${clickedItem.img}">
+         <p class="product-desc">${clickedItem.description}</p>
+            <div class="well"> <p class="product-price">${clickedItem.price}:-</p>
+            <button class="btn btn-success purchase-button">Add to cart</button>  
+          </div>
+        `
+    );
+    $("#show-a-product").append($("<div></div>").attr("id", "product-reviews"));
+
+    showReviews(itemID);
+    latestClickedProduct = itemID;
+});
+
+function showReviews (itemID) {
+    $("#all-reviews").empty();
+    let allReviews = productReviews.filter((e) => (e.id === itemID));
+
+    for (let review of allReviews) {
+
+
+        let $rating = $("<p></p>")
+
+        for (let i = 0; i < 5; i++) {
+            let className;
+            if (i < review.rating) {
+                className = "glyphicon glyphicon-star"
+            } else {
+                className = "glyphicon glyphicon-star-empty"
+            }
+            $rating.append($("<span></span>").addClass(className));
+        }
+
+        $("#all-reviews").append($("<div></div>").addClass("well").append($rating).append(
+            `   <h3>${review.title}</h3>
+                <h4>-${review.name}</h4>
+                <p>"${review.review}"</p>
+            `
+        ));
+    }
+
 }
 
-$("#pay").on("click", e => {
-    paying = true;
-    swapScreens();
-    showProductsOnCheckout();
-});
+// Add new Reviews
 
-$("#shop").on("click", e => {
-    paying = false;
-    swapScreens();
-    checkoutTable.innerHTML = `
-    <tr><th>Product</th><th>Price</th><th>Quantity</th></tr>
-    `;
-});
+$(`#submit-review-button`).on("click",() => addNewReview(latestClickedProduct));
+
+function addNewReview (itemID) {
+
+    productReviews.push({
+        title: $('input[name=reviewTitle]').val(),
+        name: $('input[name=reviewName]').val(),
+        rating: $('#rating').val(),
+        review: $('#reviewText').val(),
+        id: itemID,
+    });
+
+    showReviews(itemID);
+
+    $('input[name=reviewTitle]').val(""),
+    $('input[name=reviewName]').val(""),
+    $('#reviewText').val("")
+
+}
 
 const allProducts = electronicProducts.concat(perfumeProducts);
 
@@ -82,11 +171,13 @@ function loadProducts (category,list) {
     let $currentCategory = $(`#${category}`);
     $currentCategory.addClass(category);
     for (var i = 0; i < list.length; i++) {
-        $currentCategory.append($("<a></a>").addClass("product").attr('id', list[i].id).html(`
+        $currentCategory.append($("<div></div>").addClass("product").attr('id', list[i].id).html(`
+          <a>
           <img src=${list[i].img}>
           <h3>${list[i].productName}</h3>    
           <p>${list[i].description}</p>
           <p class="product-price">${list[i].price}:-</p>
+          </a>
           <button class="btn btn-success purchase-button">Add to cart</button>
           `));
     };
@@ -160,6 +251,7 @@ function totalCost () {
 
 
 const checkoutTable = document.getElementById("checkout-table");
+
 function showProductsOnCheckout() {
     for(var i = checkoutTable.rows.length - 1; i > 0; i--)
     {
@@ -226,6 +318,9 @@ $("#checkout-table").on("click", e => {
     totalProducts();
     totalCost();
 });
+
+
+
 
 
 

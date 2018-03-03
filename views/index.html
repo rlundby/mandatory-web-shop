@@ -27,6 +27,55 @@
     <h1>Shop or die</h1>
     <img src="http://www.queensu.ca/qieep/sites/all/themes/webpublish_queensweb/images/headers/banner_yellow_purple.jpg" alt="">
 </header>
+
+<!--
+REVIEW MODAL
+--->
+<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Leave a product review</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="reviewTitle">Title of review</label>
+                        <input type="text" name="reviewTitle" class="form-control" id="reviewTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewName">Your name</label>
+                        <input type="text" name="reviewName" class="form-control" id="reviewName">
+                    </div>
+                    <div class="form-group">
+                        <p>How many stars would you rate this product?</p>
+                        <select name="rating" id="rating">
+                            <option value="1"> 1 </option>
+                            <option value="2"> 2 </option>
+                            <option value="3"> 3 </option>
+                            <option value="4"> 4 </option>
+                            <option value="5"> 5 </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewText">Write your review</label>
+                        <textarea class="form-control" name="reviewText" rows="3" id="reviewText"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success" id="submit-review-button" data-dismiss="modal">Submit Review</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--
+--->
+
+
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -56,7 +105,21 @@
     </div>
 </nav>
 
-<div class="main-grid">
+    <div class="main-grid">
+
+    <div id="show-a-product">
+        <div id="single-product-view">
+
+        </div>
+        <div id="product-reviews">
+            <h1>Reviews:</h1>
+            <button type="button" class="btn" data-toggle="modal" data-target="#reviewModal">
+                Leave a review
+            </button>
+            <div id="all-reviews">
+            </div>
+        </div>
+    </div>
     <!-- Start of Shop Mode -->
     <div id="shop-mode" class="container-fluid">
         <div id="product-catalogue">
@@ -148,7 +211,7 @@
 
 
 <script src="../js/jquery-3.2.1.min.js"></script>
-<script src="../js/script.js"></script>
+<script src="../js/index.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 </body>
 </html>
