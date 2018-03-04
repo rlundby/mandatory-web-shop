@@ -1,4 +1,3 @@
-
 // Creating the UI, letting us toggle between shopping and paying
 const ui = {
     errorTesting: document.getElementById("error-testing"),
@@ -6,61 +5,77 @@ const ui = {
 
 // Current Products Section - divided into category
 const electronicProducts = [
-    {   productName: "Apple iPhone X - 256GB Silver",
+    {
+        productName: "Apple iPhone X - 256GB Silver",
         price: "8.590",
         description: "5,8 QHD-screen. 12x2/7MP camera",
         img: "https://www.komplett.se/img/p/800/a21b080d-bed4-3803-e860-bbb67c477ceb.jpg",
         id: "123",
-        quantity: 1},
-    {   productName: "Intel Core i7-8700K Processor",
+        quantity: 1
+    },
+    {
+        productName: "Intel Core i7-8700K Processor",
         price: "4.200",
         description: "Socket-LGA1151, 6-Core, 12-Thread",
         img: "https://www.komplett.se/img/p/1200/ed24940c-de1e-48be-a1f3-f03ff98f24fd.jpg",
         id: "1234",
-        quantity: 1},
-    {   productName: "Phanteks Eclipse P400",
+        quantity: 1
+    },
+    {
+        productName: "Phanteks Eclipse P400",
         price: "899",
         description: "Window - Satin Black",
         img: "https://www.komplett.se/img/p/800/2f2e5a12-4c90-0122-8d45-6d20b8a29e87.jpg",
         id: "12345",
-        quantity: 1}
+        quantity: 1
+    }
 ];
 
 const perfumeProducts = [
-    {   productName: "Cristiano Ronaldo Legacy",
+    {
+        productName: "Cristiano Ronaldo Legacy",
         price: "699",
         description: "EDT 50ml ",
         img: "https://www.komplett.se/img/p/1200/7bc98d28-97a1-6109-ea21-8a1acd698e7a.jpg",
         id: "abc",
-        quantity: 1},
-    {   productName: "Voluspa Prosecco Rose",
+        quantity: 1
+    },
+    {
+        productName: "Voluspa Prosecco Rose",
         price: "249",
         description: "Tin candle 127 g ",
         img: "https://www.komplett.se/img/p/1200/ec83dd5d-12f5-1ab3-1bac-0f747d9efa65.jpg",
         id: "abcd",
-        quantity: 1},
-    {   productName: "Bruno Banani Pure Man EDT",
+        quantity: 1
+    },
+    {
+        productName: "Bruno Banani Pure Man EDT",
         price: "456",
         description: "50ml ",
         img: "https://www.komplett.se/img/p/1200/8db23380-6b3e-4e3f-be77-9d42ada40088.jpg",
         id: "abcde",
-        quantity: 1},
+        quantity: 1
+    },
 ];
 
-// Reviews of products
-
+// Product reviews
 var productReviews = [
     {
         title: "This phone works great!",
         name: "Steve Jobs",
         rating: "5",
-        review: "I really love this phone! It's probably the most expensive iPhone yet, which is create for company revenue",
+        review: "I really love this phone! It's probably the most expensive iPhone yet, which is great for company revenue",
         id: "123"
     }
 ]
 
+const allProducts = electronicProducts.concat(perfumeProducts);
+const checkoutTable = document.getElementById("checkout-table");
+var latestClickedProduct;
+
+
 // Change how the app looks depending on what is clicked
-$("body").on("click", function(e) {
+$("body").on("click", function (e) {
 
     if (e.target.id === "pay") {
         $("#checkout-mode").css("display", "block");
@@ -83,10 +98,8 @@ $("body").on("click", function(e) {
     }
 });
 
-var latestClickedProduct;
-
 // Render Single Product View
-$(".category").on("click",".product a", e => {
+$(".category").on("click", ".product a", e => {
     $("#show-a-product").css("display", "block");
     $("#checkout-mode").hide();
     $("#shop-mode").hide();
@@ -94,32 +107,33 @@ $(".category").on("click",".product a", e => {
     // Write product clicked!
 
     let itemID = e.currentTarget.parentNode.getAttribute("id");
-    let clickedItem = allProducts.find(function(e) {
-    return e.id === itemID; })
+    let clickedItem = allProducts.find(function (e) {
+        return e.id === itemID;
+    })
 
     // Change HTML
     $("#single-product-view").empty();
     $("#single-product-view").html(
-        `<h1>${clickedItem.productName}</h1>
-         <img src="${clickedItem.img}">
-         <p class="product-desc">${clickedItem.description}</p>
-            <div class="well"> <p class="product-price">${clickedItem.price}:-</p>
+        `<div>
+            <h1>${clickedItem.productName}</h1>
+            <img src="${clickedItem.img}">
+            <p class="product-desc">${clickedItem.description}</p>
+        </div>
+        <div class="well singleprice"> <p class="product-price">${clickedItem.price}:-</p>
             <button class="btn btn-success purchase-button">Add to cart</button>  
-          </div>
+        </div>
         `
     );
-    $("#show-a-product").append($("<div></div>").attr("id", "product-reviews"));
 
     showReviews(itemID);
     latestClickedProduct = itemID;
 });
 
-function showReviews (itemID) {
+function showReviews(itemID) {
     $("#all-reviews").empty();
     let allReviews = productReviews.filter((e) => (e.id === itemID));
 
     for (let review of allReviews) {
-
 
         let $rating = $("<p></p>")
 
@@ -135,20 +149,18 @@ function showReviews (itemID) {
 
         $("#all-reviews").append($("<div></div>").addClass("well").append($rating).append(
             `   <h3>${review.title}</h3>
-                <h4>-${review.name}</h4>
                 <p>"${review.review}"</p>
+                <h4>-${review.name}</h4>
             `
         ));
     }
-
 }
 
 // Add new Reviews
 
-$(`#submit-review-button`).on("click",() => addNewReview(latestClickedProduct));
+$(`#submit-review-button`).on("click", () => addNewReview(latestClickedProduct));
 
-function addNewReview (itemID) {
-
+function addNewReview(itemID) {
     productReviews.push({
         title: $('input[name=reviewTitle]').val(),
         name: $('input[name=reviewName]').val(),
@@ -156,18 +168,15 @@ function addNewReview (itemID) {
         review: $('#reviewText').val(),
         id: itemID,
     });
-
     showReviews(itemID);
-
     $('input[name=reviewTitle]').val(""),
-    $('input[name=reviewName]').val(""),
-    $('#reviewText').val("")
-
+        $('input[name=reviewName]').val(""),
+        $('#reviewText').val("")
 }
 
-const allProducts = electronicProducts.concat(perfumeProducts);
 
-function loadProducts (category,list) {
+
+function loadProducts(category, list) {
     let $currentCategory = $(`#${category}`);
     $currentCategory.addClass(category);
     for (var i = 0; i < list.length; i++) {
@@ -180,16 +189,13 @@ function loadProducts (category,list) {
           </a>
           <button class="btn btn-success purchase-button">Add to cart</button>
           `));
-    };
+    }
+    ;
 };
-
-loadProducts("electronics", electronicProducts);
-loadProducts("perfume", perfumeProducts);
 
 // Keep track on which item people buy
 var itemsInCart = [];
 const $purchaseButtons = $(".purchase-button")
-
 
 $(".purchase-button").on("click", e => {
     addToCart(e);
@@ -202,9 +208,10 @@ function addToCart(e) {
     let thisItem = e.currentTarget;
     let parentDiv = thisItem.parentNode;
     let productId = parentDiv.getAttribute("id");
-    // Find item I clicked buy on
-    var clickedItem = allProducts.find(function(e) {
-        return e.id === productId; })
+
+    var clickedItem = allProducts.find(function (e) {
+        return e.id === productId;
+    })
     var found = itemsInCart.some(function (el) {
         return el.id === clickedItem.id;
     });
@@ -215,46 +222,38 @@ function addToCart(e) {
         if (!found) {
             itemsInCart.push(clickedItem);
         } else {
-            clickedItem.quantity ++;
-
+            clickedItem.quantity++;
         }
     }
-    //Update total amount of products:
+
     totalProducts();
-    //Update the total price:
-     totalCost();
+    totalCost();
 }
 
 // Count the total amount of products added
-function totalProducts () {
-    // Update total
+function totalProducts() {
     let totalItemsInCart = 0;
-    for (let i = 0; i < itemsInCart.length; i++ ) {
+    for (let i = 0; i < itemsInCart.length; i++) {
         totalItemsInCart += itemsInCart[i].quantity
     }
     $("#counter").text(`${totalItemsInCart}`);
 }
 
-
 // Count the total cost of products added
-function totalCost () {
+function totalCost() {
     let totalCostText = document.getElementById("total");
     let totalPrice = 0;
     for (i in itemsInCart) {
         let price = itemsInCart[i].price;
         let removeSymbols = parseInt(price.replace(/[^0-9]/g, ''));
-        let quantityPrice =  removeSymbols * itemsInCart[i].quantity;
+        let quantityPrice = removeSymbols * itemsInCart[i].quantity;
         totalPrice = totalPrice + quantityPrice;
         $("#total").html(`Total Price: <span id="totalPrice">${totalPrice}:-</span>`);
     }
 };
 
-
-const checkoutTable = document.getElementById("checkout-table");
-
 function showProductsOnCheckout() {
-    for(var i = checkoutTable.rows.length - 1; i > 0; i--)
-    {
+    for (var i = checkoutTable.rows.length - 1; i > 0; i--) {
         checkoutTable.deleteRow(i);
     }
     // Prints all products on checkout
@@ -269,55 +268,47 @@ function showProductsOnCheckout() {
             name.innerHTML = itemsInCart[i].productName;
             price.innerHTML = `${itemsInCart[i].price}:-`;
             quantity.innerHTML = `${quantityCart}`;
+
             var increaseButton = document.createElement("button");
             increaseButton.classList.add("incBtn")
             increaseButton.innerText = "+"
+            quantity.appendChild(increaseButton);
+
             var decreaseButton = document.createElement("button");
             decreaseButton.innerText = "-"
             decreaseButton.classList.add("decBtn")
-            quantity.appendChild(increaseButton);
             quantity.appendChild(decreaseButton);
 
         }
     }
 };
 
-
 // Increase and decrease buttons
 $("#checkout-table").on("click", e => {
+    let getID = e.target.parentNode.parentNode;
+    let productId = getID.getAttribute("id");
+    let result = itemsInCart.find(function (e) {
+        return e.id === productId;
+    })
 
-    if(e.target.classList.contains("incBtn")){
-        let getID = e.target.parentNode.parentNode;
-        let productId = getID.getAttribute("id");
-
-        let result = itemsInCart.find(function(e) {
-            return e.id === productId;
-        })
-        result.quantity ++;
+    if (e.target.classList.contains("incBtn")) {
+        result.quantity++;
         showProductsOnCheckout();
-
-    } else if (e.target.classList.contains("decBtn")){
-        let getID = e.target.parentNode.parentNode;
-        let productId = getID.getAttribute("id");
-        var p = e.target.parentNode.parentNode;
-
-        let result = itemsInCart.find(function(e) {
-            return e.id === productId;
-        })
-
+    } else if (e.target.classList.contains("decBtn")) {
         if (result.quantity > 1) {
-            result.quantity --;
+            result.quantity--;
             showProductsOnCheckout()
         } else {
             result.quantity = 0;
-            p.parentNode.removeChild(p)
+            getID.parentNode.removeChild(getID)
         }
-
-    };
-
+    }
     totalProducts();
     totalCost();
 });
+
+loadProducts("electronics", electronicProducts);
+loadProducts("perfume", perfumeProducts);
 
 
 

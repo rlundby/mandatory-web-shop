@@ -1,7 +1,17 @@
+
+/*                 */
+/* Global styling  */
+/*                 */
+
 body {
     font-family: 'Roboto', sans-serif;
     background: url("http://www.zastavki.com/pictures/originals/2015/Winter_Crystals_of_snow_on_gray_background_102993_.jpg");
 }
+
+/*                    */
+/* Styling for header */
+/*                    */
+
 header {
     display: flex;
     justify-content: center;
@@ -10,21 +20,44 @@ header {
 header img {
     width: 100vw;
 }
-header h1 {
+header h1{
     position: absolute;
     font-size: 120px;
     color:white;
     font-family: 'Roboto', sans-serif;
     padding-bottom: 30px;
 }
+header h5{
+    position:  absolute;
+    margin-top: 150px;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+
+/*                        */
+/* Styling for navigation */
+/*                        */
+
+nav {
+    padding: 20px;
+}
+nav li {
+    font-size: 18px;
+}
+
+/*                        */
+/* Styling for main grid  */
+/*                        */
 
 .main-grid {
     display: grid;
-    grid-template-columns: 30px 1fr 30px;
+    grid-template-columns: 1fr 2.5fr 1fr;
 }
-.checkout-form {
-    padding: 20px;
-}
+
+/*                         */
+/* Styling for site layout */
+/*                         */
+
 #checkout-mode {
     background: white;
     border: 1px solid lightgray;
@@ -34,51 +67,16 @@ header h1 {
 #shop-mode {
     grid-column: 2;
 }
-
 #show-a-product {
     display: none;
     grid-column: 2;
     background: white;
-}
-#single-product-view {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-
-}
-#single-product-view h1 {
-    grid-column: 2/4;
-    grid-row: 1;
-    text-align: center;
-}
-#single-product-view img {
-    grid-column: 2/4;
-    grid-row: 2;
-    width: 500px;
-    margin-left: 230px;
-}
-#single-product-view .product-desc {
-    grid-column: 2/4;
-    grid-row: 3;
-    text-align: center;
-}
-#single-product-view div {
-    grid-column: 2/3;
-    grid-row: 4;
-    display: flex;
-    justify-content: flex-end;
-}
-#single-product-view div p {
-    margin-right: 30px;
+    align-self: center;
 }
 
-
-nav {
-    padding: 20px;
-}
-
-nav li {
-    font-size: 18px;
-}
+/*                            */
+/* Styling for products site. */
+/*                            */
 
 #product-catalogue {
     border: 1px solid lightgray;
@@ -87,12 +85,10 @@ nav li {
     align-items: baseline;
     background: white;
 }
-
 #product-catalogue img {
     width: 200px;
     height: auto;
 }
-
 .product {
     display: flex;
     flex-direction: column;
@@ -101,25 +97,29 @@ nav li {
     justify-content: center;
     cursor: pointer;
 }
-
 .product h3 {
     font-size: 20px;
 }
-
 .product-price {
     font-size: 20px;
     font-weight: bold;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-
 .category div {
     display: flex;
     text-decoration: none;
-
 }
 .category div a {
     text-decoration: none;
     color: Black;
+}
+
+/*                      */
+/* Styling for checkout */
+/*                      */
+
+.checkout-form {
+    padding: 20px;
 }
 .shopping-cart {
     border-left: 1px solid lightgray;
@@ -128,22 +128,51 @@ nav li {
 .shopping-cart h3 {
     margin-top: 150px;
 }
-
 #error-testing, #not-a-number {
     font-weight:  bold;
     color: red;
     padding: 10px;
 }
-
 #totalPrice {
     font-weight: bold;
 }
-
-
 #increase-quantity, #decrease-quantity {
     margin-left: 10px;
     margin-right: 10px;
 }
+
+/*                                 */
+/* Styling for single product view */
+/*                                 */
+
+#single-product-view {
+    display: flex;
+    justify-content: center;
+}
+#single-product-view h1 {
+    text-align: center;
+}
+#single-product-view img {
+    width: 500px;
+}
+#single-product-view .product-desc {
+    text-align: center;
+}
+.singleprice {
+    margin-top: 300px;
+    display: flex;
+    height: 80px;
+}
+.singleprice p {
+    margin-right: 30px;
+}
+.singleprice button {
+    height: 40px;
+}
+
+/*                              */
+/* Styling for product reviews  */
+/*                              */
 
 #product-reviews {
     margin-left: 50px;
@@ -153,3 +182,11 @@ nav li {
     margin-bottom: 10px;
 }
 
+#all-reviews h4 {
+    font-style: italic;
+}
+.glyphicon-star, .glyphicon-star-empty {
+    color: gold;
+    font-size: 20px;
+    margin: 2px;
+}
