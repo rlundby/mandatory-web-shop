@@ -59,7 +59,7 @@ const perfumeProducts = [
 ];
 
 // Product reviews
-var productReviews = [
+const productReviews = [
     {
         title: "This phone works great!",
         name: "Steve Jobs",
@@ -67,11 +67,11 @@ var productReviews = [
         review: "I really love this phone! It's probably the most expensive iPhone yet, which is great for company revenue",
         id: "123"
     }
-]
+];
 
 const allProducts = electronicProducts.concat(perfumeProducts);
 const checkoutTable = document.getElementById("checkout-table");
-var latestClickedProduct;
+let latestClickedProduct;
 
 
 // Change how the app looks depending on what is clicked
@@ -109,7 +109,7 @@ $(".category").on("click", ".product a", e => {
     let itemID = e.currentTarget.parentNode.getAttribute("id");
     let clickedItem = allProducts.find(function (e) {
         return e.id === itemID;
-    })
+    });
 
     // Change HTML
     $("#single-product-view").empty();
@@ -120,13 +120,29 @@ $(".category").on("click", ".product a", e => {
             <p class="product-desc">${clickedItem.description}</p>
         </div>
         <div class="well singleprice"> <p class="product-price">${clickedItem.price}:-</p>
-            <button class="btn btn-success purchase-button">Add to cart</button>  
+            <button class="btn btn-success purch-button">Add to cart</button>  
         </div>
-        `
-    );
+        `);
 
     showReviews(itemID);
     latestClickedProduct = itemID;
+
+    $(".purch-button").on("click", e => {
+        let found = itemsInCart.some(function (el) {
+            return el.id === clickedItem.id;
+        });
+        if (itemsInCart.length == 0) {
+            itemsInCart.push(clickedItem);
+        } else {
+            if (!found) {
+                itemsInCart.push(clickedItem);
+            } else {
+                clickedItem.quantity++;
+            }
+        }
+        totalProducts();
+        totalCost();
+    });
 });
 
 function showReviews(itemID) {
@@ -135,7 +151,7 @@ function showReviews(itemID) {
 
     for (let review of allReviews) {
 
-        let $rating = $("<p></p>")
+        let $rating = $("<p></p>");
 
         for (let i = 0; i < 5; i++) {
             let className;
@@ -179,7 +195,7 @@ function addNewReview(itemID) {
 function loadProducts(category, list) {
     let $currentCategory = $(`#${category}`);
     $currentCategory.addClass(category);
-    for (var i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
         $currentCategory.append($("<div></div>").addClass("product").attr('id', list[i].id).html(`
           <a>
           <img src=${list[i].img}>
@@ -187,15 +203,16 @@ function loadProducts(category, list) {
           <p>${list[i].description}</p>
           <p class="product-price">${list[i].price}:-</p>
           </a>
-          <button class="btn btn-success purchase-button">Add to cart</button>
-          `));
+          <button class="purchase-button btn btn-success ">Add to cart</button>
+         `));
     }
-    ;
-};
+}
+
+loadProducts("electronics", electronicProducts);
+loadProducts("perfume", perfumeProducts);
 
 // Keep track on which item people buy
-var itemsInCart = [];
-const $purchaseButtons = $(".purchase-button")
+let itemsInCart = [];
 
 $(".purchase-button").on("click", e => {
     addToCart(e);
@@ -209,10 +226,10 @@ function addToCart(e) {
     let parentDiv = thisItem.parentNode;
     let productId = parentDiv.getAttribute("id");
 
-    var clickedItem = allProducts.find(function (e) {
+    let clickedItem = allProducts.find(function (e) {
         return e.id === productId;
-    })
-    var found = itemsInCart.some(function (el) {
+    });
+    let found = itemsInCart.some(function (el) {
         return el.id === clickedItem.id;
     });
 
@@ -250,46 +267,44 @@ function totalCost() {
         totalPrice = totalPrice + quantityPrice;
         $("#total").html(`Total Price: <span id="totalPrice">${totalPrice}:-</span>`);
     }
-};
-
+}
 function showProductsOnCheckout() {
-    for (var i = checkoutTable.rows.length - 1; i > 0; i--) {
+    for (let i = checkoutTable.rows.length - 1; i > 0; i--) {
         checkoutTable.deleteRow(i);
     }
     // Prints all products on checkout
-    for (i = 0; i < itemsInCart.length; i++) {
+    for (let i = 0; i < itemsInCart.length; i++) {
         if (itemsInCart[i].quantity != 0) {
-            var quantityCart = itemsInCart[i].quantity;
-            var row = checkoutTable.insertRow(1);
+            const quantityCart = itemsInCart[i].quantity;
+            const row = checkoutTable.insertRow(1);
             row.id = itemsInCart[i].id;
-            var name = row.insertCell(0);
-            var price = row.insertCell(1);
-            var quantity = row.insertCell(2);
+            const name = row.insertCell(0);
+            const price = row.insertCell(1);
+            const quantity = row.insertCell(2);
             name.innerHTML = itemsInCart[i].productName;
             price.innerHTML = `${itemsInCart[i].price}:-`;
             quantity.innerHTML = `${quantityCart}`;
 
-            var increaseButton = document.createElement("button");
-            increaseButton.classList.add("incBtn")
-            increaseButton.innerText = "+"
+            const increaseButton = document.createElement("button");
+            increaseButton.classList.add("incBtn");
+            increaseButton.innerText = "+";
             quantity.appendChild(increaseButton);
 
-            var decreaseButton = document.createElement("button");
-            decreaseButton.innerText = "-"
-            decreaseButton.classList.add("decBtn")
+            const decreaseButton = document.createElement("button");
+            decreaseButton.innerText = "-";
+            decreaseButton.classList.add("decBtn");
             quantity.appendChild(decreaseButton);
 
         }
     }
-};
-
+}
 // Increase and decrease buttons
 $("#checkout-table").on("click", e => {
     let getID = e.target.parentNode.parentNode;
     let productId = getID.getAttribute("id");
     let result = itemsInCart.find(function (e) {
         return e.id === productId;
-    })
+    });
 
     if (e.target.classList.contains("incBtn")) {
         result.quantity++;
@@ -306,9 +321,6 @@ $("#checkout-table").on("click", e => {
     totalProducts();
     totalCost();
 });
-
-loadProducts("electronics", electronicProducts);
-loadProducts("perfume", perfumeProducts);
 
 
 
