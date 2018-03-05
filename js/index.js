@@ -1,8 +1,3 @@
-// Creating the UI, letting us toggle between shopping and paying
-const ui = {
-    errorTesting: document.getElementById("error-testing"),
-};
-
 // Current Products Section - divided into category
 const electronicProducts = [
     {
@@ -69,6 +64,7 @@ const productReviews = [
     }
 ];
 
+// Some global variables
 const allProducts = electronicProducts.concat(perfumeProducts);
 const checkoutTable = document.getElementById("checkout-table");
 let latestClickedProduct;
@@ -99,6 +95,7 @@ $("body").on("click", function (e) {
 });
 
 // Render Single Product View
+
 $(".category").on("click", ".product a", e => {
     $("#show-a-product").css("display", "block");
     $("#checkout-mode").hide();
@@ -145,6 +142,8 @@ $(".category").on("click", ".product a", e => {
     });
 });
 
+// Shows all reviews on product site
+
 function showReviews(itemID) {
     $("#all-reviews").empty();
     let allReviews = productReviews.filter((e) => (e.id === itemID));
@@ -172,7 +171,7 @@ function showReviews(itemID) {
     }
 }
 
-// Add new Reviews
+//  Allows users to add new reviews
 
 $(`#submit-review-button`).on("click", () => addNewReview(latestClickedProduct));
 
@@ -191,7 +190,7 @@ function addNewReview(itemID) {
 }
 
 
-
+// Renders all products to the site
 function loadProducts(category, list) {
     let $currentCategory = $(`#${category}`);
     $currentCategory.addClass(category);
@@ -207,20 +206,20 @@ function loadProducts(category, list) {
          `));
     }
 }
-
 loadProducts("electronics", electronicProducts);
 loadProducts("perfume", perfumeProducts);
 
 // Keep track on which item people buy
 let itemsInCart = [];
 
+// Adds the functionality to the buy buttons
 $(".purchase-button").on("click", e => {
     addToCart(e);
     totalProducts();
     totalCost();
 });
 
-
+// Adds the clicked product to cart
 function addToCart(e) {
     let thisItem = e.currentTarget;
     let parentDiv = thisItem.parentNode;
@@ -268,6 +267,8 @@ function totalCost() {
         $("#total").html(`Total Price: <span id="totalPrice">${totalPrice}:-</span>`);
     }
 }
+
+// Show all products in cart on checkout
 function showProductsOnCheckout() {
     for (let i = checkoutTable.rows.length - 1; i > 0; i--) {
         checkoutTable.deleteRow(i);
@@ -298,7 +299,7 @@ function showProductsOnCheckout() {
         }
     }
 }
-// Increase and decrease buttons
+// Increase and decrease quantity buttons
 $("#checkout-table").on("click", e => {
     let getID = e.target.parentNode.parentNode;
     let productId = getID.getAttribute("id");
@@ -323,9 +324,62 @@ $("#checkout-table").on("click", e => {
 });
 
 
+// Validates the buyform on submit
+$("#buyform").on("submit", e => {
+    e.preventDefault()
+    const  $inputs = $("#buyform input");
 
+    for (let i = 0; i < $inputs.length; i++) {
+        console.log($inputs.length);
 
+        // Validate Phone Number
+        if (i === 3) {
+            let $phoneNmbr = $("#number").val();
+            const allowedSymbols = /^\d{10}$/;
 
+            if ($phoneNmbr.match(allowedSymbols) || $phoneNmbr === "") {
+                $("#error-testing").html("");
+            }
+            else {
+                $("#error-testing").text("Please enter a valid phone number");
+                $("#number").css("border-color", "red").focus();
+                setTimeout(function () {
+                    $("#number").css("border-color", "#ccc");
+                }, 500);
+                return false;
+            }
+        }
+        // Validate Zip
+        else if (i === 6) {
+            const validZip =  /^\d{5}$/;
+            let $zipCode = $("#zipcode").val();
 
+            if ($zipCode.match(validZip)) {
+                $("#error-testing").html("");
+            }
+            else {
+                $("#error-testing").text("Please enter a valid zip code");
+                $("#zipcode").css("border-color", "red").focus();
+                setTimeout(function () {
+                    $("#zipcode").css("border-color", "#ccc");
+                }, 500);
+            }
+        }
+
+        // Validate Rest of Form
+        else if ($inputs[i].value === "") {
+            $("#error-testing").text("Please fill in the required fields");
+            $inputs[i].style.borderColor = "red";
+            $inputs[i].focus();
+            setTimeout(function () {
+                $inputs[i].style.borderColor = "";
+            }, 500);
+            return false;
+        }
+        else {
+            $("#error-testing").text("");
+        }
+    }
+})
 
 
