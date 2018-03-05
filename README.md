@@ -1,7 +1,9 @@
 # mandatory-web-shop
 
+New features in mandatory 3:
 
-testing new branch
+- Added the ability to view all products individually 
+- Added the ability for customers to leave and read reviews (You leave reviews through a modal using Bootstrap 3 btw)
+- Reworked form validation with jquery and now includes all inputfields instead of being 3 different functions (phew).
 
-
-https://scotch.io/courses/build-an-interactive-javascript-food-menu/add-to-cart-and-show-items-in-modal
+Woop woop!
