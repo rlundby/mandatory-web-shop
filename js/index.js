@@ -22,12 +22,6 @@ function loadProducts() {
 }
 let allReviews = [];
 
-fetch('http://demo.edument.se/api/reviews')
-    .then(response => response.json())
-    .then(function(data){
-        allReviews = data;
-    })
-
 // Get products
 fetch('http://demo.edument.se/api/products')
     .then(response => response.json())
@@ -39,6 +33,7 @@ fetch('http://demo.edument.se/api/products')
 // Some global variables
 const checkoutTable = document.getElementById("checkout-table");
 let latestClickedProduct;
+let latestClickedObject;
 
 // Change how the app looks depending on what is clicked
 $("body").on("click", function (e) {
@@ -67,18 +62,16 @@ $("body").on("click", function (e) {
 
 function writeProduct (e) {
     let itemID = parseInt(e.currentTarget.parentNode.getAttribute("id"));
-    console.log(itemID);
     let clickedItem = allProducts.find(function (e) {
         return e.Id === itemID;
     });
-
     // Change HTML
     $("#single-product-view").empty();
     $("#single-product-view").html(
         `<div>
             <h1>${clickedItem.Name}</h1>
             <img src="${clickedItem.Image}">
-            <p class="product-desc">${clickedItem.Description}</p>
+            <p class="product-desc">"${clickedItem.Description}"</p>
         </div>
         <div class="well singleprice"> <p class="product-price">${clickedItem.Price}:-</p>
             <button class="btn btn-success purch-button">Add to cart</button>  
@@ -87,6 +80,7 @@ function writeProduct (e) {
 
     showReviews(clickedItem);
     latestClickedProduct = itemID;
+    latestClickedObject = clickedItem;
 
     $(".purch-button").on("click", e => {
         let found = itemsInCart.some(function (el) {
@@ -113,34 +107,45 @@ function writeProduct (e) {
 // Render Single Product View
 
 
-function showReviews(itemID) {
+function showReviews(clickedItem) {
 
-   // $("#all-reviews").empty();
-    let reviews = allReviews.filter((e) => (e.ProductID === itemID.Id));
+    fetch('http://demo.edument.se/api/reviews')
+        .then(response => response.json())
+        .then(function(data){
+            allReviews = data;
+        })
+        .then(function(){
+            $("#all-reviews").empty();
+            let reviews = allReviews.filter((e) => (e.ProductID === clickedItem.Id));
 
-    for (let review of reviews) {
+            for (let review of reviews) {
 
-        let $rating = $("<p></p>");
+                let $rating = $("<p></p>");
 
-        if (review.Name !== "") {
-            for (let i = 0; i < 5; i++) {
-                let className;
-                if (i < review.Rating) {
-                    className = "glyphicon glyphicon-star"
-                } else {
-                    className = "glyphicon glyphicon-star-empty"
-                }
-                $rating.append($("<span></span>").addClass(className));
-            }
-        $("#all-reviews").append($("<div></div>").addClass("well").append($rating).append(
-            `   
+                if (review.Name !== "") {
+                    for (let i = 0; i < 5; i++) {
+                        let className;
+                        if (i < review.Rating) {
+                            className = "glyphicon glyphicon-star"
+                        } else {
+                            className = "glyphicon glyphicon-star-empty"
+                        }
+                        $rating.append($("<span></span>").addClass(className));
+                    }
+                    $("#all-reviews").append($("<div></div>").addClass("well").append($rating).append(
+                        `   
                 <p>"${review.Comment}"</p>
                 <h4>-${review.Name}</h4>
             `
-            ));
-        }
-    }
+                    ));
+                }
+            }
+        })
+   // $("#all-reviews").empty();
+
 }
+
+let thisProduct;
 
 $("#product-catalogue").on("click", ".product a", e => {
     $("#show-a-product").css("display", "block");
@@ -150,15 +155,16 @@ $("#product-catalogue").on("click", ".product a", e => {
     // Write product clicked!
 
     $("#all-reviews").empty();
-    writeProduct(e);
 
+    thisProduct = e;
+    writeProduct(e);
 
 });
 
 
 //  Allows users to add new reviews
 
-$(`#submit-review-button`).on("click", () => addNewReview(latestClickedProduct));
+// $(`#submit-review-button`).on("click", () => addNewReview(latestClickedProduct));
 
 function addNewReview(clickedProduct) {
 
@@ -178,8 +184,16 @@ function addNewReview(clickedProduct) {
     $('input[name=reviewName]').val(""),
     $('#reviewText').val("")
 
-    showReviews(clickedProduct);
 }
+
+$('#submit-review-button').on("click", function(e) {
+    addNewReview(latestClickedProduct);
+
+});
+
+$('#reviewModal').on('hidden.bs.modal', function () {
+    showReviews(latestClickedObject);
+});
 
 
 

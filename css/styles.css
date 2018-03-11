@@ -99,6 +99,10 @@ nav li {
     justify-content: center;
     cursor: pointer;
 }
+.product a {
+    text-decoration: none;
+    color: black;
+}
 .product h3 {
     font-size: 20px;
 }
@@ -149,27 +153,42 @@ nav li {
 
 #single-product-view {
     display: flex;
-    justify-content: center;
+    background: #f3f3f3;
+    margin: 20px;
+    flex-direction: column;
+    align-items: center;
 }
+
+
 #single-product-view h1 {
     text-align: center;
 }
-#single-product-view img {
 
-}
 #single-product-view .product-desc {
     text-align: center;
 }
 .singleprice {
-    margin-top: 300px;
     display: flex;
-    height: 80px;
+    width: 260px;
+
 }
 .singleprice p {
     margin-right: 30px;
 }
-.singleprice button {
-    height: 40px;
+
+#single-product-view div:first-of-type {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#single-product-view img {
+    max-width: 200px;
+}
+
+.product-desc {
+    font-style: italic;
+    max-width: 600px;
 }
 
 /*                              */
