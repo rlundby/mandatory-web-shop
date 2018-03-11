@@ -1,74 +1,44 @@
-// Current Products Section - divided into category
-const electronicProducts = [
-    {
-        productName: "Apple iPhone X - 256GB Silver",
-        price: "8.590",
-        description: "5,8 QHD-screen. 12x2/7MP camera",
-        img: "https://www.komplett.se/img/p/800/a21b080d-bed4-3803-e860-bbb67c477ceb.jpg",
-        id: "123",
-        quantity: 1
-    },
-    {
-        productName: "Intel Core i7-8700K Processor",
-        price: "4.200",
-        description: "Socket-LGA1151, 6-Core, 12-Thread",
-        img: "https://www.komplett.se/img/p/1200/ed24940c-de1e-48be-a1f3-f03ff98f24fd.jpg",
-        id: "1234",
-        quantity: 1
-    },
-    {
-        productName: "Phanteks Eclipse P400",
-        price: "899",
-        description: "Window - Satin Black",
-        img: "https://www.komplett.se/img/p/800/2f2e5a12-4c90-0122-8d45-6d20b8a29e87.jpg",
-        id: "12345",
-        quantity: 1
-    }
-];
+let allProducts = [];
 
-const perfumeProducts = [
-    {
-        productName: "Cristiano Ronaldo Legacy",
-        price: "699",
-        description: "EDT 50ml ",
-        img: "https://www.komplett.se/img/p/1200/7bc98d28-97a1-6109-ea21-8a1acd698e7a.jpg",
-        id: "abc",
-        quantity: 1
-    },
-    {
-        productName: "Voluspa Prosecco Rose",
-        price: "249",
-        description: "Tin candle 127 g ",
-        img: "https://www.komplett.se/img/p/1200/ec83dd5d-12f5-1ab3-1bac-0f747d9efa65.jpg",
-        id: "abcd",
-        quantity: 1
-    },
-    {
-        productName: "Bruno Banani Pure Man EDT",
-        price: "456",
-        description: "50ml ",
-        img: "https://www.komplett.se/img/p/1200/8db23380-6b3e-4e3f-be77-9d42ada40088.jpg",
-        id: "abcde",
-        quantity: 1
-    },
-];
-
-// Product reviews
-const productReviews = [
-    {
-        title: "This phone works great!",
-        name: "Steve Jobs",
-        rating: "5",
-        review: "I really love this phone! It's probably the most expensive iPhone yet, which is great for company revenue",
-        id: "123"
+function loadProducts() {
+    const noEmptyProducts = allProducts.filter(product => product.Name.length > 0);
+    for (let i = 0; i < noEmptyProducts.length; i++) {
+        $("#product-catalogue").append($("<div></div>").addClass("product").attr('id', noEmptyProducts[i].Id).html(`
+           <a>
+           <img src=${noEmptyProducts[i].Image}>
+           <h3>${noEmptyProducts[i].Name}</h3>
+           <p>${noEmptyProducts[i].Description}</p>
+         <p class="product-price">${noEmptyProducts[i].Price}:-</p>
+          </a>
+          <button class="purchase-button btn btn-success ">Add to cart</button>
+          `));
     }
-];
+    // Adds the functionality to the buy buttons
+    $(".purchase-button").on("click", e => {
+        addToCart(e);
+        // totalProducts();
+        // totalCost();
+    });
+}
+let allReviews = [];
+
+fetch('http://demo.edument.se/api/reviews')
+    .then(response => response.json())
+    .then(function(data){
+        allReviews = data;
+    })
+
+// Get products
+fetch('http://demo.edument.se/api/products')
+    .then(response => response.json())
+    .then(function(data){
+        allProducts = data;
+    })
+    .then(loadProducts)
 
 // Some global variables
-const allProducts = electronicProducts.concat(perfumeProducts);
 const checkoutTable = document.getElementById("checkout-table");
 let latestClickedProduct;
-
 
 // Change how the app looks depending on what is clicked
 $("body").on("click", function (e) {
@@ -94,40 +64,39 @@ $("body").on("click", function (e) {
     }
 });
 
-// Render Single Product View
 
-$(".category").on("click", ".product a", e => {
-    $("#show-a-product").css("display", "block");
-    $("#checkout-mode").hide();
-    $("#shop-mode").hide();
-
-    // Write product clicked!
-
-    let itemID = e.currentTarget.parentNode.getAttribute("id");
+function writeProduct (e) {
+    let itemID = parseInt(e.currentTarget.parentNode.getAttribute("id"));
+    console.log(itemID);
     let clickedItem = allProducts.find(function (e) {
-        return e.id === itemID;
+        return e.Id === itemID;
     });
 
     // Change HTML
     $("#single-product-view").empty();
     $("#single-product-view").html(
         `<div>
-            <h1>${clickedItem.productName}</h1>
-            <img src="${clickedItem.img}">
-            <p class="product-desc">${clickedItem.description}</p>
+            <h1>${clickedItem.Name}</h1>
+            <img src="${clickedItem.Image}">
+            <p class="product-desc">${clickedItem.Description}</p>
         </div>
-        <div class="well singleprice"> <p class="product-price">${clickedItem.price}:-</p>
+        <div class="well singleprice"> <p class="product-price">${clickedItem.Price}:-</p>
             <button class="btn btn-success purch-button">Add to cart</button>  
         </div>
         `);
 
-    showReviews(itemID);
+    showReviews(clickedItem);
     latestClickedProduct = itemID;
 
     $(".purch-button").on("click", e => {
         let found = itemsInCart.some(function (el) {
-            return el.id === clickedItem.id;
+            return el.Id === clickedItem.Id;
         });
+
+        if (!clickedItem.quantity) {
+            clickedItem.quantity = 1;
+        }
+
         if (itemsInCart.length == 0) {
             itemsInCart.push(clickedItem);
         } else {
@@ -140,105 +109,107 @@ $(".category").on("click", ".product a", e => {
         totalProducts();
         totalCost();
     });
-});
+}
+// Render Single Product View
 
-// Shows all reviews on product site
 
 function showReviews(itemID) {
-    $("#all-reviews").empty();
-    let allReviews = productReviews.filter((e) => (e.id === itemID));
 
-    for (let review of allReviews) {
+   // $("#all-reviews").empty();
+    let reviews = allReviews.filter((e) => (e.ProductID === itemID.Id));
+
+    for (let review of reviews) {
 
         let $rating = $("<p></p>");
 
-        for (let i = 0; i < 5; i++) {
-            let className;
-            if (i < review.rating) {
-                className = "glyphicon glyphicon-star"
-            } else {
-                className = "glyphicon glyphicon-star-empty"
+        if (review.Name !== "") {
+            for (let i = 0; i < 5; i++) {
+                let className;
+                if (i < review.Rating) {
+                    className = "glyphicon glyphicon-star"
+                } else {
+                    className = "glyphicon glyphicon-star-empty"
+                }
+                $rating.append($("<span></span>").addClass(className));
             }
-            $rating.append($("<span></span>").addClass(className));
-        }
-
         $("#all-reviews").append($("<div></div>").addClass("well").append($rating).append(
-            `   <h3>${review.title}</h3>
-                <p>"${review.review}"</p>
-                <h4>-${review.name}</h4>
+            `   
+                <p>"${review.Comment}"</p>
+                <h4>-${review.Name}</h4>
             `
-        ));
+            ));
+        }
     }
 }
+
+$("#product-catalogue").on("click", ".product a", e => {
+    $("#show-a-product").css("display", "block");
+    $("#checkout-mode").hide();
+    $("#shop-mode").hide();
+
+    // Write product clicked!
+
+    $("#all-reviews").empty();
+    writeProduct(e);
+
+
+});
+
 
 //  Allows users to add new reviews
 
 $(`#submit-review-button`).on("click", () => addNewReview(latestClickedProduct));
 
-function addNewReview(itemID) {
-    productReviews.push({
-        title: $('input[name=reviewTitle]').val(),
-        name: $('input[name=reviewName]').val(),
-        rating: $('#rating').val(),
-        review: $('#reviewText').val(),
-        id: itemID,
-    });
-    showReviews(itemID);
+function addNewReview(clickedProduct) {
+
+    fetch('http://demo.edument.se/api/reviews', {
+        method: 'POST',
+        body: JSON.stringify({
+        ProductID: clickedProduct,
+        Name: $('input[name=reviewName]').val(),
+        Comment:$('#reviewText').val(),
+        Rating: $('#rating').val()
+        }),
+        headers: new Headers({
+            'Content-Type': 'application/json'
+        })
+    })
     $('input[name=reviewTitle]').val(""),
-        $('input[name=reviewName]').val(""),
-        $('#reviewText').val("")
+    $('input[name=reviewName]').val(""),
+    $('#reviewText').val("")
+
+    showReviews(clickedProduct);
 }
 
 
-// Renders all products to the site
-function loadProducts(category, list) {
-    let $currentCategory = $(`#${category}`);
-    $currentCategory.addClass(category);
-    for (let i = 0; i < list.length; i++) {
-        $currentCategory.append($("<div></div>").addClass("product").attr('id', list[i].id).html(`
-          <a>
-          <img src=${list[i].img}>
-          <h3>${list[i].productName}</h3>    
-          <p>${list[i].description}</p>
-          <p class="product-price">${list[i].price}:-</p>
-          </a>
-          <button class="purchase-button btn btn-success ">Add to cart</button>
-         `));
-    }
-}
-loadProducts("electronics", electronicProducts);
-loadProducts("perfume", perfumeProducts);
 
 // Keep track on which item people buy
 let itemsInCart = [];
 
-// Adds the functionality to the buy buttons
-$(".purchase-button").on("click", e => {
-    addToCart(e);
-    totalProducts();
-    totalCost();
-});
 
 // Adds the clicked product to cart
 function addToCart(e) {
-    let thisItem = e.currentTarget;
-    let parentDiv = thisItem.parentNode;
-    let productId = parentDiv.getAttribute("id");
+    let productId = parseInt(e.currentTarget.parentNode.getAttribute("id"));
 
     let clickedItem = allProducts.find(function (e) {
-        return e.id === productId;
-    });
-    let found = itemsInCart.some(function (el) {
-        return el.id === clickedItem.id;
+        return e.Id === productId;
     });
 
-    if (itemsInCart.length == 0) {
-        itemsInCart.push(clickedItem);
+    if (!clickedItem.quantity) {
+        clickedItem.quantity = 1;
+    }
+
+    let found = itemsInCart.some(function (el) {
+         return el.Name === clickedItem.Name;
+     });
+
+     if (itemsInCart.length == 0) {
+         itemsInCart.push(clickedItem);
     } else {
         if (!found) {
             itemsInCart.push(clickedItem);
         } else {
-            clickedItem.quantity++;
+                clickedItem.quantity ++;
         }
     }
 
@@ -260,8 +231,8 @@ function totalCost() {
     let totalCostText = document.getElementById("total");
     let totalPrice = 0;
     for (i in itemsInCart) {
-        let price = itemsInCart[i].price;
-        let removeSymbols = parseInt(price.replace(/[^0-9]/g, ''));
+        let price = itemsInCart[i].Price;
+        let removeSymbols = parseFloat(price);
         let quantityPrice = removeSymbols * itemsInCart[i].quantity;
         totalPrice = totalPrice + quantityPrice;
         $("#total").html(`Total Price: <span id="totalPrice">${totalPrice}:-</span>`);
@@ -278,12 +249,12 @@ function showProductsOnCheckout() {
         if (itemsInCart[i].quantity != 0) {
             const quantityCart = itemsInCart[i].quantity;
             const row = checkoutTable.insertRow(1);
-            row.id = itemsInCart[i].id;
+            row.id = itemsInCart[i].Id;
             const name = row.insertCell(0);
             const price = row.insertCell(1);
             const quantity = row.insertCell(2);
-            name.innerHTML = itemsInCart[i].productName;
-            price.innerHTML = `${itemsInCart[i].price}:-`;
+            name.innerHTML = itemsInCart[i].Name;
+            price.innerHTML = `${itemsInCart[i].Price}:-`;
             quantity.innerHTML = `${quantityCart}`;
 
             const increaseButton = document.createElement("button");
@@ -302,11 +273,11 @@ function showProductsOnCheckout() {
 // Increase and decrease quantity buttons
 $("#checkout-table").on("click", e => {
     let getID = e.target.parentNode.parentNode;
-    let productId = getID.getAttribute("id");
-    let result = itemsInCart.find(function (e) {
-        return e.id === productId;
-    });
+    let productId = parseInt(getID.getAttribute("id"));
 
+    let result = itemsInCart.find(function (e) {
+        return e.Id === productId;
+    });
     if (e.target.classList.contains("incBtn")) {
         result.quantity++;
         showProductsOnCheckout();
@@ -378,6 +349,24 @@ $("#buyform").on("submit", e => {
         }
         else {
             $("#error-testing").text("");
+
+            fetch('http://demo.edument.se/api/orders', {
+                method: 'POST',
+                body: JSON.stringify({
+                    FirstName: $('input[name=fname]').val(),
+                    LastName: $('input[name=lname]').val(),
+                    Email: $('input[name=mail]').val(),
+                    Phone: $('input[name=number]').val(),
+                    StreetAddress: $('input[name=address]').val(),
+                    ZipCode: $('input[name=zipcode]').val(),
+                    City: $('input[name=city]').val(),
+                    Comment: $('#exampleFormControlTextarea1').val(),
+                    OrderItems: itemsInCart
+                }),
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            })
         }
     }
 })
