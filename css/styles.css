@@ -147,6 +147,10 @@ nav li {
     margin-right: 10px;
 }
 
+.glyphicon-ok {
+    color: limegreen;
+}
+
 /*                                 */
 /* Styling for single product view */
 /*                                 */

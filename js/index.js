@@ -20,12 +20,13 @@ function loadProducts() {
         // totalCost();
     });
 }
+
 let allReviews = [];
 
 // Get products
 fetch('http://demo.edument.se/api/products')
     .then(response => response.json())
-    .then(function(data){
+    .then(function (data) {
         allProducts = data;
     })
     .then(loadProducts)
@@ -60,7 +61,7 @@ $("body").on("click", function (e) {
 });
 
 
-function writeProduct (e) {
+function writeProduct(e) {
     let itemID = parseInt(e.currentTarget.parentNode.getAttribute("id"));
     let clickedItem = allProducts.find(function (e) {
         return e.Id === itemID;
@@ -104,6 +105,7 @@ function writeProduct (e) {
         totalCost();
     });
 }
+
 // Render Single Product View
 
 
@@ -111,10 +113,10 @@ function showReviews(clickedItem) {
 
     fetch('http://demo.edument.se/api/reviews')
         .then(response => response.json())
-        .then(function(data){
+        .then(function (data) {
             allReviews = data;
         })
-        .then(function(){
+        .then(function () {
             $("#all-reviews").empty();
             let reviews = allReviews.filter((e) => (e.ProductID === clickedItem.Id));
 
@@ -141,7 +143,7 @@ function showReviews(clickedItem) {
                 }
             }
         })
-   // $("#all-reviews").empty();
+    // $("#all-reviews").empty();
 
 }
 
@@ -171,22 +173,22 @@ function addNewReview(clickedProduct) {
     fetch('http://demo.edument.se/api/reviews', {
         method: 'POST',
         body: JSON.stringify({
-        ProductID: clickedProduct,
-        Name: $('input[name=reviewName]').val(),
-        Comment:$('#reviewText').val(),
-        Rating: $('#rating').val()
+            ProductID: clickedProduct,
+            Name: $('input[name=reviewName]').val(),
+            Comment: $('#reviewText').val(),
+            Rating: $('#rating').val()
         }),
         headers: new Headers({
             'Content-Type': 'application/json'
         })
     })
     $('input[name=reviewTitle]').val(""),
-    $('input[name=reviewName]').val(""),
-    $('#reviewText').val("")
+        $('input[name=reviewName]').val(""),
+        $('#reviewText').val("")
 
 }
 
-$('#submit-review-button').on("click", function(e) {
+$('#submit-review-button').on("click", function (e) {
     addNewReview(latestClickedProduct);
 
 });
@@ -194,7 +196,6 @@ $('#submit-review-button').on("click", function(e) {
 $('#reviewModal').on('hidden.bs.modal', function () {
     showReviews(latestClickedObject);
 });
-
 
 
 // Keep track on which item people buy
@@ -214,16 +215,16 @@ function addToCart(e) {
     }
 
     let found = itemsInCart.some(function (el) {
-         return el.Name === clickedItem.Name;
-     });
+        return el.Name === clickedItem.Name;
+    });
 
-     if (itemsInCart.length == 0) {
-         itemsInCart.push(clickedItem);
+    if (itemsInCart.length == 0) {
+        itemsInCart.push(clickedItem);
     } else {
         if (!found) {
             itemsInCart.push(clickedItem);
         } else {
-                clickedItem.quantity ++;
+            clickedItem.quantity++;
         }
     }
 
@@ -284,6 +285,7 @@ function showProductsOnCheckout() {
         }
     }
 }
+
 // Increase and decrease quantity buttons
 $("#checkout-table").on("click", e => {
     let getID = e.target.parentNode.parentNode;
@@ -312,10 +314,35 @@ $("#checkout-table").on("click", e => {
 // Validates the buyform on submit
 $("#buyform").on("submit", e => {
     e.preventDefault()
-    const  $inputs = $("#buyform input");
+    const $inputs = $("#buyform input");
 
-    for (let i = 0; i < $inputs.length; i++) {
-        console.log($inputs.length);
+    // If all fields in the buy form is validated - send order.
+    if (validateForm($inputs)) {
+        fetch('http://demo.edument.se/api/orders', {
+            method: 'POST',
+            body: JSON.stringify({
+                FirstName: $('input[name=fname]').val(),
+                LastName: $('input[name=lname]').val(),
+                Email: $('input[name=mail]').val(),
+                Phone: $('input[name=number]').val(),
+                StreetAddress: $('input[name=address]').val(),
+                ZipCode: $('input[name=zipcode]').val(),
+                City: $('input[name=city]').val(),
+                Comment: $('#exampleFormControlTextarea1').val(),
+                OrderItems: itemsInCart
+            }),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })
+        $('#buyModal').modal('show');
+    }
+})
+
+//Function to validate form
+function validateForm(input) {
+    for (let i = 0; i < input.length; i++) {
+        console.log(input.length);
 
         // Validate Phone Number
         if (i === 3) {
@@ -336,7 +363,7 @@ $("#buyform").on("submit", e => {
         }
         // Validate Zip
         else if (i === 6) {
-            const validZip =  /^\d{5}$/;
+            const validZip = /^\d{5}$/;
             let $zipCode = $("#zipcode").val();
 
             if ($zipCode.match(validZip)) {
@@ -348,41 +375,24 @@ $("#buyform").on("submit", e => {
                 setTimeout(function () {
                     $("#zipcode").css("border-color", "#ccc");
                 }, 500);
+                return false;
             }
         }
 
         // Validate Rest of Form
-        else if ($inputs[i].value === "") {
+        else if (input[i].value === "") {
             $("#error-testing").text("Please fill in the required fields");
-            $inputs[i].style.borderColor = "red";
-            $inputs[i].focus();
+            input[i].style.borderColor = "red";
+            input[i].focus();
             setTimeout(function () {
-                $inputs[i].style.borderColor = "";
+                input[i].style.borderColor = "";
             }, 500);
             return false;
         }
         else {
             $("#error-testing").text("");
 
-            fetch('http://demo.edument.se/api/orders', {
-                method: 'POST',
-                body: JSON.stringify({
-                    FirstName: $('input[name=fname]').val(),
-                    LastName: $('input[name=lname]').val(),
-                    Email: $('input[name=mail]').val(),
-                    Phone: $('input[name=number]').val(),
-                    StreetAddress: $('input[name=address]').val(),
-                    ZipCode: $('input[name=zipcode]').val(),
-                    City: $('input[name=city]').val(),
-                    Comment: $('#exampleFormControlTextarea1').val(),
-                    OrderItems: itemsInCart
-                }),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
         }
     }
-})
-
-
+    return true;
+}
