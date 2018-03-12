@@ -1,8 +1,8 @@
-# mandatory-web-shop
+# mandatory-web-shop v4
 
 New stuff in this version:
 
- - All products is now fetched from the edument API.
+ - All products are now fetched from the edument API.
  - The same goes for the reviews of the items.
  - Customers can now press "purchase" and their order will be sent in to the API once all
  fields have been validated.
